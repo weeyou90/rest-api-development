@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Remember to update this list
-ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members']
+ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', 'users/register']
 
 def make_json_response(data, status=True, code=200):
     """Utility function to create the JSON responses."""
@@ -49,6 +49,14 @@ def meta_members():
     with open("./team_members.txt") as f:
         team_members = f.read().strip().split("\n")
     return make_json_response(team_members)
+
+@app.route("/users/register")
+def users_register():
+	"""Register a user"""
+	#if success
+	if (1 == 1):
+		return make_json_response(None), 201
+	return make_json_response(None,False);
 
 
 if __name__ == '__main__':
