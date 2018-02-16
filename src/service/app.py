@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Remember to update this list
-ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', 'users/register']
+ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/'] 
 
 def make_json_response(data, status=True, code=200):
     """Utility function to create the JSON responses."""
@@ -29,7 +29,6 @@ def make_json_response(data, status=True, code=200):
         mimetype='application/json'
     )
     return response
-
 
 @app.route("/")
 def index():
@@ -52,11 +51,31 @@ def meta_members():
 
 @app.route("/users/register")
 def users_register():
-	"""Register a user"""
-	#if success
-	if (1 == 1):
-		return make_json_response(None), 201
-	return make_json_response(None,False);
+    #Register a user
+    #if success
+    if (1 == 1):
+	return make_json_response(None), 201
+    return make_json_response(None,False)
+
+@app.route("/users/authenticate")
+def users_authenticate():
+    if (1 == 1):
+    #validate access, return token
+        return make_json_response(None)
+    return make_json_response(None,False)
+
+@app.route("/users/expire")
+def users_expire():
+	#expire a token
+	if (1==1):
+		return make_json_response(None)	
+	return make_json_response(None,False)
+
+@app.route("/users")
+def users(): 
+	if (1==1):
+		return make_json_response(None)
+	return make_json_response(None, False)
 
 
 if __name__ == '__main__':
