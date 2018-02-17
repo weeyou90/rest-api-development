@@ -45,3 +45,18 @@ ajax_get(API_ENDPOINT + '/meta/members', function(data) {
 	}
 });
 
+
+ajax_get(API_ENDPOINT + '/meta/short_answer_questions', function(data) {
+    if (data.status) {
+        var short_answer_questions = data.result;
+        var output = "<p>Short Answer Questions: </p><ul>";
+        for (var i = 0; i < short_answer_questions.length; i++) {
+            output += "<li>" + short_answer_questions[i] + "</li>";
+        }
+        output += "</ul>";
+        document.getElementById("demo_short_answer_questions").innerHTML = output;
+    }
+    else {
+        document.getElementById("demo_short_answer_questions").innerHTML = "Short answer questions failed to load";
+    }
+});
