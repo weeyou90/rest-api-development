@@ -2,8 +2,11 @@
 
 from flask import Flask
 from flask_cors import CORS
+from app import app, db 
+from flask import session, request, abort, jsonify, render_template, escape
 import json
 import os
+from model import *
 
 app = Flask(__name__)
 # Enable cross origin sharing for all endpoints
@@ -56,13 +59,43 @@ def meta_short_answer_questions():
         short_answer_questions = f.read().strip().split("\n")
     return make_json_response(short_answer_questions)
 
-@app.route("/users/register")
+@app.route("/users/register", methods=['POST'])
+# @verify_required_params(['email', 'password', 'name'])
+# @validate_email_format
 def users_register():
     #Register a user
-    #if success
-    if (1 == 1):
-	return make_json_response(None), 201
-    return make_json_response(None,False)
+    username = request.args.get('name')
+    password = request.args.get('password')
+    password1 = request.args.get('password1')
+    email = request.args.get('email')
+
+    try:
+        if username is None or password is None or password1 is None or email is None:
+            return make_json_response({'data':{'succeed':False, 'message':"Missing required parameters"}}, 400)
+        if password != password1:
+            return make_json_response({'data':{'succeed':False, 'message':"Password don't match"}}, 400)
+
+        username = username.lower()
+        email = email.lower()
+
+        if User.query.filter_by(username=username).first() is not None:
+            return make_json_response({'data':{'succeed':False, 'message':"Username exists"}}, 400)
+
+        if User.query.filter_by(email=email).first() is not None:
+            return make_json_response({'data':{'succeed':False, 'message':"Email exists"}}, 400)
+
+        user = User(username=username, email=email, password=password)
+        db.session.add(user)
+        db.session.commit()
+    except Exception as e:
+        return handle_invalid_response(e)
+
+    return make_json_response({'data':{'succeed':True, 'message':"Successfully signup"}}, 201)
+
+ #    #if success
+ #    if (1 == 1):
+	# return make_json_response(None), 201
+ #    return make_json_response(None,False)
 
 @app.route("/users/authenticate")
 def users_authenticate():
