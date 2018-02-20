@@ -96,10 +96,10 @@ Please fill out this section with details relevant to your team.
 
 ### Team Members
 
-1. Member 1 Name
-2. Member 2 Name
-3. Member 3 Name
-4. Member 4 Name
+1. LAU Wee You
+2. LEE Zi Shan
+3. SIA Wei Kiat Jason
+4. ZHOU Zhi Zhong
 
 ### Short Answer Questions
 
@@ -131,13 +131,40 @@ Answer: Please replace this sentence with your answer.
 
 #### Please declare your individual contributions to the assignment:
 
-1. Member 1 Name
-    - Integrated feature x into component y
+1. LAU Wee You
     - Implemented z
-2. Member 2 Name
-    - Wrote the front-end code
-3. Member 3 Name
-    - Designed the database schema
-4. Member 4 Name
-    - Implemented x
+2. LEE Zi Shan
+    - Implemented z
+3. SIA Wei Kiat Jason
+    - Implemented z
+4. ZHOU Zhi Zhong
+    - Implemented z
 
+
+
+/* Actual Document Starts Here*/
+
+Database Schema
+
+Table
+users {
+  username: varchar (255) not null,
+  fullname: varchar (255) not null,
+  salt: varchar (255) not null,
+  hashed_password: varchar (255) not null,
+  age: int not null
+}
+
+diary_entries {
+  id: int primary key auto increment, 
+  title: varchar (255) not null,
+  author: varchar (255) not null,
+  publish_date: datetime not null, 
+  public: boolean not null, 
+  text: text
+
+}
+
+members {
+  name: varchar (255) not null
+}
