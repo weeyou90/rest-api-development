@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Remember to update this list
-ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions'] 
+ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary'] 
 
 def make_json_response(data, status=True, code=200):
     """Utility function to create the JSON responses."""
@@ -83,6 +83,30 @@ def users():
 	if (1==1):
 		return make_json_response(None)
 	return make_json_response(None, False)
+    
+
+@app.route("/diary", methods = ['GET'])
+def diary(): 
+    diary_entries = [{
+      "id": 1,
+      "title": "My First Project",
+      "author": "ashrugged",
+      "publish_date": "2013-02-27T13:37:00+00:00",
+      "public": 'true',
+      "text": "If you don't know, the thing to do is not to get scared, but to learn."
+    },
+    {
+      "id": 2,
+      "title": "A New Lesson!",
+      "author": "audrey123talks",
+      "publish_date": "2013-02-29T13:37:00+00:00",
+      "public": 'true',
+      "text": "Check out my latest video!"
+    }]
+
+    
+    return make_json_response(diary_entries)
+
 
 
 if __name__ == '__main__':

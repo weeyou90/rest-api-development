@@ -60,3 +60,4 @@ ajax_get(API_ENDPOINT + '/meta/short_answer_questions', function(data) {
         document.getElementById("demo_short_answer_questions").innerHTML = "Short answer questions failed to load";
     }
 });
+
