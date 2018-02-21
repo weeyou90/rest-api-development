@@ -2,6 +2,8 @@
 
 from flask import Flask
 from flask_cors import CORS
+from flask import request
+import sys
 import json
 import os
 
@@ -10,7 +12,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Remember to update this list
-ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions'] 
+ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permissions'] 
+
 
 def make_json_response(data, status=True, code=200):
     """Utility function to create the JSON responses."""
@@ -30,6 +33,17 @@ def make_json_response(data, status=True, code=200):
     )
     return response
 
+# =======================================================
+#                     C O M M O N
+# =======================================================
+
+def is_logged_in(token):
+# TBD: check if token is issued
+	return True
+
+# =======================================================
+#                        M E T A
+# =======================================================
 @app.route("/")
 def index():
     """Returns a list of implemented endpoints."""
@@ -56,6 +70,9 @@ def meta_short_answer_questions():
         short_answer_questions = f.read().strip().split("\n")
     return make_json_response(short_answer_questions)
 
+# ====================================================
+#                 U S E R
+# ====================================================
 @app.route("/users/register")
 def users_register():
     #Register a user
@@ -84,7 +101,37 @@ def users():
 		return make_json_response(None)
 	return make_json_response(None, False)
 
+# =====================================================
+#                    D I A R Y
+# =====================================================
+@app.route("/diary")
+def diary():
+	return make_json_response(None)
 
+@app.route("/diary/create", methods=['POST'])
+def diary_create():
+
+	try:
+		data = request.get_json()
+		print data
+		print data['token']
+		if (is_logged_in(data['token'])):
+			return make_json_response(None,True,201)
+		return make_json_response("Invalid authentication token",False)
+	except:
+		return make_json_response("Invalid authentication token",False)
+
+
+@app.route("/diary/delete")
+def diary_delete():
+	return make_json_response(None)
+
+@app.route("/diary/permissions")
+def diary_permissions():
+	return make_json_response(None)
+
+
+# working
 if __name__ == '__main__':
     # Change the working directory to the script directory
     abspath = os.path.abspath(__file__)
