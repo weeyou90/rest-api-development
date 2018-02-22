@@ -23,7 +23,8 @@
             <li><a href="{{url_for('users_register')}}">Register a user</a></li>
             <!-- {% block content %}{% endblock %} -->
             <li><a href="{{url_for('users_authenticate')}}"> Login </a></li>
-            <li>Logout</li>
+            <li><a href="{{url_for('users_expire')}}">Logout</li>
+            <li><a href="{{url_for('users')}}">Retrieve user information</a></li>
             <li>Display all public diary entries</li>
             <li>Display an authenticated user's diary entries</li>
             <li>Create a new diary entry</li>

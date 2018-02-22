@@ -193,15 +193,29 @@ def users_authenticate():
 @app.route("/users/expire")
 def users_expire():
 	#expire a token
-	if (1==1):
-		return make_json_response(None)	
-	return make_json_response(None,False)
+    session.clear()
+    return redirect(url_for('index'))
+
+    ## add time out feature
+    # token = User.query.filter(User.hashed == hashed)
+
+    # if token.count():
+    #     token = token.first()
+
+    #     if token.expired_at > datetime.datetime.now():
+    #         return True
+
+	# 	return make_json_response(None)	
+	# return make_json_response(None,False)
 
 @app.route("/users")
-def users(): 
-	if (1==1):
-		return make_json_response(None)
-	return make_json_response(None, False)
+def users():
+    # if session['user_name']:
+    user = User.query.filter_by(name=session['user_name']).first()
+    return render_template('info.html', user=user) 
+	# if (1==1):
+	# 	return make_json_response(None)
+	# return make_json_response(None, False)
 
 
 if __name__ == '__main__':
