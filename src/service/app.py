@@ -1,12 +1,15 @@
 #!/usr/bin/python
 
-from flask import Flask
 from flask_cors import CORS
-from app import app, db 
-from flask import session, request, abort, jsonify, render_template, escape
+# from app import app, db 
+from werkzeug import generate_password_hash, check_password_hash
+from flask import Flask,request,session,abort,jsonify,redirect,render_template, escape, make_response, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
 import json
 import os
-from model import *
+from model import db
+from forms import SignupForm, LoginForm
+# from model import *
 
 app = Flask(__name__)
 # Enable cross origin sharing for all endpoints
@@ -15,9 +18,40 @@ CORS(app)
 # Remember to update this list
 ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions'] 
 
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///paste.db"
+app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120))
+    password = db.Column(db.String(120))
+    fullname = db.Column(db.String(120))
+    age = db.Column(db.Integer)
+    email = db.Column(db.String(240))
+
+    def __init__(self, name, email, password, fullname, age):
+        self.name = name
+        self.email = email
+        self.fullname = fullname
+        self.age = age
+        self.set_password(password)
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    def __repr__(self):
+        return '<User %r>' % self.name
+
 def make_json_response(data, status=True, code=200):
     """Utility function to create the JSON responses."""
-
+    
     to_serialize = {}
     if status:
         to_serialize['status'] = True
@@ -33,10 +67,21 @@ def make_json_response(data, status=True, code=200):
     )
     return response
 
-@app.route("/")
+@app.before_request
+def check_user_status():
+    if 'user_email' not in session:
+        session['user_email'] = None
+        session['user_name'] = None
+
+@app.route('/', methods=('GET', 'POST'))
 def index():
+    if session['user_name']:
+        user = User.query.filter_by(name=session['user_name']).first()
+        return render_template('index.html', users=user)
+    ## modify it for debug 
+    return render_template('index.html')
     """Returns a list of implemented endpoints."""
-    return make_json_response(ENDPOINT_LIST)
+    # return make_json_response(ENDPOINT_LIST)
 
 
 @app.route("/meta/heartbeat")
@@ -59,50 +104,91 @@ def meta_short_answer_questions():
         short_answer_questions = f.read().strip().split("\n")
     return make_json_response(short_answer_questions)
 
-@app.route("/users/register", methods=['POST'])
+
+@app.route("/users/register", methods=('GET','POST'))
+    
 # @verify_required_params(['email', 'password', 'name'])
 # @validate_email_format
 def users_register():
-    #Register a user
-    username = request.args.get('name')
-    password = request.args.get('password')
-    password1 = request.args.get('password1')
-    email = request.args.get('email')
+    if session['user_email']:
+        flash('you are already signed up')
+        return redirect(url_for('index'))
+    form = SignupForm()
+    if form.validate_on_submit():
+        user_email = User.query.filter_by(email=form.email.data).first()
+        if user_email is None:
+            try:
+                user = User(form.name.data, form.email.data, form.password.data, form.fullname.data, form.age.data)
+                db.session.add(user)
+                db.session.commit()
+            except:
+                print('Insert error')
+            session['user_email'] = form.email.data
+            session['user_name'] = form.name.data
+            flash('Thanks for registering. You are now logged in!')
+            return redirect(url_for('index'))
+        else:
+            flash("A User with that email already exists. Choose another one!", 'error')
+            render_template('signup.html', form=form)
+    return render_template('signup.html', form=form)
+    # # #Register a user
+    # username = request.form('username')
+    # password = request.form('password')
+    # fullname = request.form('fullname')
+    # age = request.form('age')
 
-    try:
-        if username is None or password is None or password1 is None or email is None:
-            return make_json_response({'data':{'succeed':False, 'message':"Missing required parameters"}}, 400)
-        if password != password1:
-            return make_json_response({'data':{'succeed':False, 'message':"Password don't match"}}, 400)
+    # return render_template('welcome.html', username=username)
+    # if username.count(' ') > 0:
+    #     return render_template('signup.html', username)
 
-        username = username.lower()
-        email = email.lower()
+    # try:
+    #     if username is None or password is None or password1 is None or email is None:
+    #         return make_json_response({'data':{'succeed':False, 'message':"Missing required parameters"}}, 400)
+    #     if password != password1:
+    #         return make_json_response({'data':{'succeed':False, 'message':"Password don't match"}}, 400)
 
-        if User.query.filter_by(username=username).first() is not None:
-            return make_json_response({'data':{'succeed':False, 'message':"Username exists"}}, 400)
+    #     username = username.lower()
+    #     email = email.lower()
 
-        if User.query.filter_by(email=email).first() is not None:
-            return make_json_response({'data':{'succeed':False, 'message':"Email exists"}}, 400)
+    #     if User.query.filter_by(username=username).first() is not None:
+    #         return make_json_response({'data':{'succeed':False, 'message':"Username exists"}}, 400)
 
-        user = User(username=username, email=email, password=password)
-        db.session.add(user)
-        db.session.commit()
-    except Exception as e:
-        return handle_invalid_response(e)
+    #     if User.query.filter_by(email=email).first() is not None:
+    #         return make_json_response({'data':{'succeed':False, 'message':"Email exists"}}, 400)
 
-    return make_json_response({'data':{'succeed':True, 'message':"Successfully signup"}}, 201)
+    #     user = User(username=username, email=email, password=password)
+    #     db.session.add(user)
+    #     db.session.commit()
+    # except Exception as e:
+    #     return handle_invalid_response(e)
 
- #    #if success
+    # return make_json_response({'data':{'succeed':True, 'message':"Successfully signup"}}, 201)
+
+    #if success
  #    if (1 == 1):
 	# return make_json_response(None), 201
  #    return make_json_response(None,False)
 
-@app.route("/users/authenticate")
+@app.route("/users/authenticate", methods=('GET','POST'))
 def users_authenticate():
-    if (1 == 1):
+    if session['user_email']:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None and user.check_password(form.password.data):
+            session['user_email'] = form.email.data
+            session['user_name'] = user.name
+            flash('Thanks for logging in')
+            return redirect(url_for('index'))
+        else:
+            flash('Sorry! no user exists with this email and password')
+            return render_template('login.html', form=form)
+    return render_template('login.html', form=form)
     #validate access, return token
-        return make_json_response(None)
-    return make_json_response(None,False)
+    #     return make_json_response(None)
+    # return make_json_response(None,False)
+
 
 @app.route("/users/expire")
 def users_expire():
@@ -123,6 +209,7 @@ if __name__ == '__main__':
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
-
+    db.create_all()
     # Run the application
-    app.run(debug=False, port=8080, host="0.0.0.0")
+    ## set debug as True for auto reload
+    app.run(debug=True, port=8080, host="0.0.0.0")

@@ -10,11 +10,19 @@
     <body>
         
         <h1>Secret Diary Front End</h1>
+        {% block body %}
+    <ul>
+        {% if users is defined %}
+        <li>Welcome {{ users.name }}</li>
+        {% endif %}
+    </ul>
+
+{% endblock %}
         <p>Requirements for the front end are as follows:</p>
         <ul>
-            <li><a href="signup.html">Register a user</a></li>
+            <li><a href="{{url_for('users_register')}}">Register a user</a></li>
             <!-- {% block content %}{% endblock %} -->
-            <li>Login</li>
+            <li><a href="{{url_for('users_authenticate')}}"> Login </a></li>
             <li>Logout</li>
             <li>Display all public diary entries</li>
             <li>Display an authenticated user's diary entries</li>
@@ -31,7 +39,7 @@
         </div>
         <div id="demo_short_answer_questions">weeee
         </div>
-        <script src="./demo.js"></script>
+        <script src="{{url_for('static', filename='demo.js')}}"></script>
         
     </body>
 </html>
