@@ -1,8 +1,39 @@
 <html>
     <head>
+        <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+        <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+        <link href="./diary.css" rel="stylesheet">
     </head>
     <body>
-        <h1>Secret Diary Front End</h1>
+    <div class="container">
+      <div class="header">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" ><a href="main">Login</a></li>
+            <li role="presentation"><a href="#">Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+ 
+      <div class="jumbotron">
+        <h1>Secret Diary App</h1>
+        <form class="form-signin">
+        <label for="inputName" class="sr-only">Name</label>
+        <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Name" required autofocus>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
+        <div id='button'><a href='diary.html'>Sign up</a></div> 
+
+      </form>
+      </div>
+
+
+        
+
+    
         <p>Requirements for the front end are as follows:</p>
         <ul>
             <li>Register a user</li>
@@ -14,15 +45,20 @@
             <li>Delete an existing diary entry</li>
             <li>Toggle the permissions on an existing diary entry</li>
         </ul>
-        <!-- the following is a demo on how you may display data retrieved from
-             the API
-        -->
         <div id="demo_heartbeat">
         </div>
         <div id="demo_members">
         </div>
         <div id="demo_short_answer_questions">weeee
         </div>
+ 
+      <footer class="footer">
+        <p>&copy; CS5331 Assignment 1 Group 10</p>
+      </footer>
+ 
+    </div>
+
+       
         <script src="./demo.js"></script>
     </body>
 </html>
