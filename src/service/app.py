@@ -165,7 +165,11 @@ def diary():
       "text": "Check out my latest video!"
     }]
 
-    
+    #code to view diary
+    db=get_db()	
+    cursor = db.execute('SELECT * FROM diary_entries')  
+    print (cursor.fetchall())
+   	
     return make_json_response(diary_entries)
 
 
@@ -187,16 +191,17 @@ def diary_create():
 	if not (is_logged_in(data['token'])):
 		return make_json_response("Invalid authentication token",False)
 	
-	#code to insert diary
+	#====code to insert diary====
 	db=get_db()
 	
-	#get max id
-	#cursor = db.execute('SELECT max(id) FROM diary_entries')
-	#print cursor.fetchone()
-	#diary_id = 1 if cursor.fetchone() == None else cursor.fetchone()[0] + 1
-	
+	#get max id (TBD: get max id of entry by logged in user)	
+    	cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
+	a = cursor.fetchone()
+	#set id as maxid+1
+	diary_id = 1 if not a else 1 + int(a[0])
+
 	#insert diary entry
-	db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,4,?,?)', [diary_id, title, "author", public, text])
+	db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, datetime.now() ,"author", public, text])
 	db.commit()
 
 	return make_json_response(diary_id,True,201)
@@ -211,7 +216,7 @@ def diary_delete():
 		token = data['token']
 		diary_id = data['id']
 	except:
-		#print request.data
+		print request.data
 		return make_json_response("Invalid inputs",False)
 
 	if not (is_logged_in(data['token'])):
@@ -219,10 +224,10 @@ def diary_delete():
 
 	#code to delete diary
 	db=get_db()
-	db.execute('delete from diary_entries where id = '+diary_id)
+	cursor = db.execute('delete from diary_entries where id = ?',[diary_id])
 	db.commit()
-
-	if ( 1 == 1): #if delete successful
+	
+	if ( cursor.rowcount == 1): #if delete successful
 		return make_json_response(None, True)
 	return make_json_response("Cannot find diary entry", False)
 
@@ -242,10 +247,13 @@ def diary_permissions():
 		return make_json_response("Invalid authentication token",False)
 
 	#code to update diary
-	if ( 1 == 1): #if update successful
+	db=get_db()
+	cursor = db.execute('update diary_entries set public = ? where id = ?',[public, diary_id])
+	db.commit()
+	
+	if ( cursor.rowcount == 1): #if update successful
 		return make_json_response(None, True)
 	return make_json_response("Cannot find diary entry", False)
-
 
 # working
 if __name__ == '__main__':
