@@ -12,9 +12,9 @@ create table if not exists diary_entries (
   author varchar (255) not null,
   publish_date datetime not null, 
   public boolean not null, 
-  text: text
+  text text
 );
 
-create table if not exists members {
+create table if not exists members (
   name varchar (255) not null
-};
+);

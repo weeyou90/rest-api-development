@@ -1,19 +1,63 @@
-#!/usr/bin/python
+#/usr/bin/python
 
-from flask import Flask
+from flask import Flask, request, session, g
 from flask_cors import CORS
-from flask import request
 import sys
 import json
 import os
+import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
+app.config.from_object(__name__)
+
+app.config.update(dict(
+	DATABASE=os.path.join(app.root_path, 'flaskr.db'),
+	SECRET_KEY='development key',
+	USERNAME='admin',
+	PASSWORD='default'
+))
+app.config.from_envvar('FLASKR_SETTINGS', silent=True)
+
 # Enable cross origin sharing for all endpoints
 CORS(app)
 
 # Remember to update this list
 ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permissions'] 
 
+#================================================================
+#        D B    H E L P E R  F U N C TI O N S
+#================================================================
+def connect_db():
+	rv = sqlite3.connect(app.config['DATABASE'])
+	rv.row_factory = sqlite3.Row
+	return rv
+
+def get_db():
+	if not hasattr(g, 'sqlite_db'):
+		g.sqlite_db = connect_db()
+	return g.sqlite_db
+
+def init_db():
+	db = get_db()
+	with app.open_resource('schema.sql', mode='r') as f:
+		db.cursor().executescript(f.read())
+	db.commit()
+
+@app.cli.command('initdb')
+def initdb_command():
+	init_db()
+	print('Initialised the database')
+
+@app.teardown_appcontext
+def close_db(error):
+	if hasattr(g, 'sqlite_db'):
+		g.sqlite_db.close()
+
+
+# =======================================================
+#                     C O M M O N
+# =======================================================
 def make_json_response(data, status=True, code=200):
     """Utility function to create the JSON responses."""
 
@@ -32,9 +76,6 @@ def make_json_response(data, status=True, code=200):
     )
     return response
 
-# =======================================================
-#                     C O M M O N
-# =======================================================
 
 def is_logged_in(token):
 # TBD: check if token is issued
@@ -130,25 +171,80 @@ def diary():
 
 @app.route("/diary/create", methods=['POST'])
 def diary_create():
+#token, title, public, text
+	try:
+	#check for correct inputs
+		data = request.get_json()
+		token = data['token']
+		title = data['title']
+		public = data['public']
+		text = data['text']
+	except:
+		#print request.data
+		return make_json_response("Invalid inputs",False)
 
+	#authenticate
+	if not (is_logged_in(data['token'])):
+		return make_json_response("Invalid authentication token",False)
+	
+	#code to insert diary
+	db=get_db()
+	
+	#get max id
+	#cursor = db.execute('SELECT max(id) FROM diary_entries')
+	#print cursor.fetchone()
+	#diary_id = 1 if cursor.fetchone() == None else cursor.fetchone()[0] + 1
+	
+	#insert diary entry
+	db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,4,?,?)', [diary_id, title, "author", public, text])
+	db.commit()
+
+	return make_json_response(diary_id,True,201)
+
+
+@app.route("/diary/delete", methods=['POST'])
+def diary_delete():
+	#token, id
+	try:
+	#check for correct inputs
+		data = request.get_json()
+		token = data['token']
+		diary_id = data['id']
+	except:
+		#print request.data
+		return make_json_response("Invalid inputs",False)
+
+	if not (is_logged_in(data['token'])):
+		return make_json_response("Invalid authentication token",False)
+
+	#code to delete diary
+	db=get_db()
+	db.execute('delete from diary_entries where id = '+diary_id)
+	db.commit()
+
+	if ( 1 == 1): #if delete successful
+		return make_json_response(None, True)
+	return make_json_response("Cannot find diary entry", False)
+
+@app.route("/diary/permissions", methods=['POST'])
+def diary_permissions():
+	#token, id, public
 	try:
 		data = request.get_json()
-		print data
-		print data['token']
-		if (is_logged_in(data['token'])):
-			return make_json_response(None,True,201)
-		return make_json_response("Invalid authentication token",False)
+		token = data['token']
+		diary_id = data['id']
+		public = data['public']
 	except:
+		#print request.data
+		return make_json_response("Invalid inputs",False)
+
+	if not (is_logged_in(data['token'])):
 		return make_json_response("Invalid authentication token",False)
 
-
-@app.route("/diary/delete")
-def diary_delete():
-	return make_json_response(None)
-
-@app.route("/diary/permissions")
-def diary_permissions():
-	return make_json_response(None)
+	#code to update diary
+	if ( 1 == 1): #if update successful
+		return make_json_response(None, True)
+	return make_json_response("Cannot find diary entry", False)
 
 
 # working
