@@ -1,3 +1,7 @@
+echo "Getting the list of public diary entries:"
+
+curl -i localhost:8080/diary
+
 echo "Sending invalid post inputs:"
 
 curl localhost:8080/diary/create -X POST -H "Content-Type: application/json" -d '{"token":"2"}'
