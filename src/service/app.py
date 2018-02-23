@@ -222,7 +222,7 @@ def diary_delete():
 	if not (is_logged_in(data['token'])):
 		return make_json_response("Invalid authentication token",False)
 
-	#code to delete diary
+	#code to delete diary (TBD: delete entry owned by user)
 	db=get_db()
 	cursor = db.execute('delete from diary_entries where id = ?',[diary_id])
 	db.commit()
@@ -246,7 +246,7 @@ def diary_permissions():
 	if not (is_logged_in(data['token'])):
 		return make_json_response("Invalid authentication token",False)
 
-	#code to update diary
+	#code to update diary owned by user
 	db=get_db()
 	cursor = db.execute('update diary_entries set public = ? where id = ?',[public, diary_id])
 	db.commit()
