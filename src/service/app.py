@@ -8,7 +8,7 @@ from flask import Flask,request,session,abort,jsonify,redirect,render_template, 
 import json
 import os
 from uuid import uuid4
-from forms import SignupForm, LoginForm
+from forms import SignupForm, LoginForm, NewEntryForm
 
 
 from flask import Flask, request, session, g
@@ -137,19 +137,22 @@ def is_logged_in(token):
 @app.route("/")
 def index():
     if session['user_name']:
-		db=get_db()
-		session_user_name = session['user_name']
-		cursor = db.execute('SELECT * FROM users where name = session_user_name')  
-		user = cursor.fetchone()
-		make_json_response(user_name)
-		return render_template('index.html', users=user)
+        db=get_db()
+        session_user_name = session['user_name']
+        cursor = db.execute('SELECT * FROM users where name = session_user_name')  
+        cursor2 = db.execute('Select * from diary_entries where public=1')
+        posts = cursor2.fetchall()
+        user = cursor.fetchone()
+        make_json_response(user_name)
+        return render_template('index.html', users=user, posts=posts )
 
-        # user = User.query.filter_by(name=session['user_name']).first()
-        
-    ## modify it for debug 
-    return render_template('index.html')
-    """Returns a list of implemented endpoints."""
-    # return make_json_response(ENDPOINT_LIST)
+    db=get_db()
+    cursor2 = db.execute('Select * from diary_entries where public=1')
+    posts = cursor2.fetchall()
+    return render_template('index.html', posts=posts )
+
+	  
+
 
 
 @app.route("/meta/heartbeat")
@@ -376,6 +379,28 @@ def diary_permissions():
 	if ( cursor.rowcount == 1): #if update successful
 		return make_json_response(None, True)
 	return make_json_response("Cannot find diary entry", False)
+
+
+@app.route("/diary/newEntry")
+def new_entry():
+     publishDate = "0800"
+     if session['user_name']:
+        form = NewEntryForm()
+	if form.validate_on_submit():
+		db=get_db()
+                try:
+                    db.execute('insert into diary_entries(title,author,publish_date,public,text) values (?,?,?,?)', [form.title.data,user_name,publishDate, form.public.data, form.text.data])
+                    db.commit()
+                    db.close()
+		except:
+                    print('Insert error')
+                    session['user_name'] = form.name.data
+                    return redirect(url_for('index'))
+	else:
+            render_template('signup.html', form=form)	
+     else:
+        return render_template('unauthorised.html')
+
 
 # working
 if __name__ == '__main__':

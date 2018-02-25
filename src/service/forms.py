@@ -19,3 +19,10 @@ class SignupForm(FlaskForm):
     fullname = StringField('Fullname', validators=[DataRequired(), Length(min=2, max=30)])
     age = IntegerField('Age', validators=[DataRequired()])
 
+
+class NewEntryForm(FlaskForm):
+    token = StringField('token')
+    title = StringField('title', validators=[DataRequired(), Length(min=2, max=30)])
+    public = IntegerField('public', validators=[DataRequired()])
+    text = StringField('text', validators=[DataRequired()])
+
