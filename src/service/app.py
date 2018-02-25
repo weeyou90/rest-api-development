@@ -145,11 +145,11 @@ def index():
     if session['user_name']:
         db=get_db()
         session_user_name = session['user_name']
-        cursor = db.execute('SELECT * FROM users where name = session_user_name')  
+        cursor = db.execute('SELECT * FROM users where name =(?)' ,[session_user_name])  
         cursor2 = db.execute('Select * from diary_entries where public=1')
         posts = cursor2.fetchall()
         user = cursor.fetchone()
-        make_json_response(user_name)
+        make_json_response(session_user_name)
         return render_template('index.html', users=user, posts=posts )
 
     db=get_db()
@@ -198,11 +198,11 @@ def users_register():
 		submitted_name = form.name.data
 		cursor = db.execute('SELECT * FROM users where name = (?)' , [submitted_name])
 		a = cursor.fetchone()
-		user_id = 1 if not a else 1 + int(a['id'])
+		# user_id = 1 if not a else 1 + int(a['id'])
 		if a is None: 
 			# try:
 			pw = generate_password_hash(form.password.data)
-			db.execute('insert into users (id,name,password,fullname,age, token) values (?,?,?,?,?, ?)', [user_id,form.name.data, pw, form.fullname.data ,form.age.data, '123'])
+			db.execute('insert into users (name,password,fullname,age, token) values (?,?,?,?, ?)', [form.name.data, pw, form.fullname.data ,form.age.data, '123'])
 			#take note of token
 			db.commit()
 			db.close()
