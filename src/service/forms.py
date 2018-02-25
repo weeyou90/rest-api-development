@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField,IntegerField
 from wtforms.validators import Email, Length, EqualTo, DataRequired
+from wtforms.widgets import TextArea
 
 
 class LoginForm(FlaskForm):
@@ -24,5 +25,5 @@ class NewEntryForm(FlaskForm):
     token = StringField('token')
     title = StringField('title', validators=[DataRequired(), Length(min=2, max=30)])
     public = IntegerField('public', validators=[DataRequired()])
-    text = StringField('text', validators=[DataRequired()])
+    text = StringField('text', validators=[DataRequired()],widget=TextArea())
 

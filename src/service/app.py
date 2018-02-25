@@ -391,8 +391,8 @@ def diary_permissions():
 @app.route("/diary/newEntry")
 def new_entry():
      publishDate = "0800"
-     if session['user_name']:
-        form = NewEntryForm()
+     form = NewEntryForm()
+     if session['user_name']:   
 	if form.validate_on_submit():
 		db=get_db()
                 try:
@@ -403,9 +403,9 @@ def new_entry():
                     print('Insert error')
                     return redirect(url_for('index'))
 	else:
-            render_template('signup.html', form=form)	
+            render_template('newEntry.html', form=form)	
      else:
-        return render_template('unauthorised.html')
+        return render_template('newEntry.html', form=form)
 
 
 # working

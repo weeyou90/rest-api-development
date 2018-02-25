@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Log in {% endblock %}
+{% block body %}
+
+
+<div class="container jumbo-container">
+  		<div class="jumbotron">
+    		<h1>New Entry</h1>      
+    		<p>Post your new Entry
+  		</div>
+</div>
+
+
+<div class="container">
+<form class = "login-form" method="POST" action="{{url_for('diary_create')}}">
+	<div class="inner-form-login">
+    	{{ form.hidden_tag() }}
+
+ 	<label>Title</label> 
+	{{ form.title(class="form-control") }}
+  	{% if form.title.errors %}
+	    <ul class=errors>
+	    {% for error in form.title.errors %}
+	      <li class = "error">{{ error }}</li>
+	    {% endfor %}
+	    </ul>
+    	{% endif %}
+	
+	<label>Public</label>
+	{{ form.public(size=1) }}
+  	{% if form.public.errors %}
+	    <ul class=errors>
+	    {% for error in form.public.errors %}
+	      <li class = "error">{{ error }}</li>
+	    {% endfor %}
+	    </ul>
+    	{% endif %}
+
+	<Label>Text</label> 
+	{{ form.text(row=20, style="width:100%; height:300px", class="form-control") }}
+  	{% if form.text.errors %}
+	    <ul class=errors>
+	    {% for error in form.text.errors %}
+	      <li class = "error">{{ error }}</li>
+	    {% endfor %}
+	    </ul>
+    	{% endif %}
+	<input class = "login-btn" type="submit" value="Create"></p>
+	</div>
+
+</form>
+</div>
+
+{% endblock %}
