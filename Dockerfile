@@ -18,7 +18,7 @@ RUN pip install -U setuptools pip wheel && pip install -r /requirements.txt
 
 RUN echo "ServerName localhost  " >> /etc/apache2/apache2.conf
 RUN echo "$user     hard    nproc       20" >> /etc/security/limits.conf
-# WORKDIR ./src
+WORKDIR ./src
 
 ADD ./src/service /service
 # ADD ./src/html /var/www/html
