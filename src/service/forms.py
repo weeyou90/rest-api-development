@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField,IntegerField
+from wtforms import PasswordField, StringField,IntegerField, RadioField
 from wtforms.validators import Email, Length, EqualTo, DataRequired
 from wtforms.widgets import TextArea
 
@@ -24,6 +24,6 @@ class SignupForm(FlaskForm):
 class NewEntryForm(FlaskForm):
     token = StringField('token')
     title = StringField('title', validators=[DataRequired(), Length(min=2, max=30)])
-    public = IntegerField('public', validators=[DataRequired()])
+    public = RadioField('public', choices=[('isPublic','Public Post'),('isNotPublic','Private Post')])
     text = StringField('text', validators=[DataRequired()],widget=TextArea())
 
