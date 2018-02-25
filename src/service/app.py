@@ -54,6 +54,11 @@ def close_db(error):
 	if hasattr(g, 'sqlite_db'):
 		g.sqlite_db.close()
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 # =======================================================
 #                     C O M M O N
@@ -167,10 +172,12 @@ def diary():
 
     #code to view diary
     db=get_db()	
+    db.row_factory = dict_factory
+
     cursor = db.execute('SELECT * FROM diary_entries')  
-    print (cursor.fetchall())
+    a = cursor.fetchall()
    	
-    return make_json_response(diary_entries)
+    return make_json_response(a)
 
 
 @app.route("/diary/create", methods=['POST'])
