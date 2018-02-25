@@ -223,7 +223,7 @@ def users():
         users = User.query.filter_by(name=session['user_name']).first()
         return render_template('info.html', users=users) 
     else:
-        return render_template('authorised.html')
+        return render_template('unauthorised.html')
 
 
 if __name__ == '__main__':
