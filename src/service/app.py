@@ -84,8 +84,8 @@ class User():
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
+    # def check_password(self, password):
+    #     return check_password_hash(self.password, password)
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -182,15 +182,10 @@ def meta_short_answer_questions():
 # ====================================================
 @app.route("/users/register", methods=('GET','POST'))
 def users_register():
-    # if session['user_email']:
-    #     flash('you are already signed up')
-    #     return redirect(url_for('index'))
-    form = SignupForm()
-    if form.validate_on_submit():
+	form = SignupForm()
+	if form.validate_on_submit():
 		db=get_db()
-		cursor = db.execute('SELECT * FROM users where name = form.name.data')  
-
-        # user_name = User.query.filter_by(name=form.name.data).first()
+		cursor = db.execute('SELECT * FROM users where name = form.name.data')
 		user_name = cursor.fetchone()
 		make_json_response(user_name)
 		diary_id = 1 if not a else 1 + int(a[0])
@@ -206,62 +201,18 @@ def users_register():
 			return redirect(url_for('index'))
 		else:
 			flash("A User with that name already exists. Choose another one!", 'error')
-        	render_template('signup.html', form=form)
-        	return render_template('signup.html', form=form)  #double check
-
-
-       # user = User(name=form.name.data, password=form.password.data,fullname= form.fullname.data, age= form.age.data)
-       # db.session.add(user)
-       # db.session.commit()
-
-
-    # # #Register a user
-    # username = request.form('username')
-    # password = request.form('password')
-    # fullname = request.form('fullname')
-    # age = request.form('age')
-
-    # return render_template('welcome.html', username=username)
-    # if username.count(' ') > 0:
-    #     return render_template('signup.html', username)
-
-    # try:
-    #     if username is None or password is None or password1 is None or email is None:
-    #         return make_json_response({'data':{'succeed':False, 'message':"Missing required parameters"}}, 400)
-    #     if password != password1:
-    #         return make_json_response({'data':{'succeed':False, 'message':"Password don't match"}}, 400)
-
-    #     username = username.lower()
-    #     email = email.lower()
-
-    #     if User.query.filter_by(username=username).first() is not None:
-    #         return make_json_response({'data':{'succeed':False, 'message':"Username exists"}}, 400)
-
-    #     if User.query.filter_by(email=email).first() is not None:
-    #         return make_json_response({'data':{'succeed':False, 'message':"Email exists"}}, 400)
-
-    #     user = User(username=username, email=email, password=password)
-    #     db.session.add(user)
-    #     db.session.commit()
-    # except Exception as e:
-    #     return handle_invalid_response(e)
-
-    # return make_json_response({'data':{'succeed':True, 'message':"Successfully signup"}}, 201)
-
-    #if success
- #    if (1 == 1):
-	# return make_json_response(None), 201
- #    return make_json_response(None,False)
+			render_template('signup.html', form=form)
+	return render_template('signup.html', form=form)
 
 @app.route("/users/authenticate", methods=('GET','POST'))
 def users_authenticate():
-    if session['user_name']:
-        return redirect(url_for('index'))
-    form = LoginForm()
-    if form.validate_on_submit():
+	if session['user_name']:
+		return redirect(url_for('index'))
+	form = LoginForm()
+	if form.validate_on_submit():
 		db=get_db()
-		cursor = db.execute('SELECT * FROM users where name = form.name.data')  
-        # user_name = User.query.filter_by(name=form.name.data).first()
+		user_name = form.name.data
+		cursor = db.execute('SELECT * FROM users where name = user_name')  
 		user = cursor.fetchone()
 		make_json_response(user)
 		check_correct_password = check_password_hash(user.password, form.password.data) #double check pls! 
@@ -272,7 +223,7 @@ def users_authenticate():
 		else:
 			flash('Sorry! no user exists with this email and password')
 			return render_template('login.html', form=form)
-		return render_template('login.html', form=form)
+	return render_template('login.html', form=form)
 
 @app.route("/users/expire")
 def users_expire():
