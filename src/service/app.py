@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-	DATABASE=os.path.join(app.root_path, '/flaskr.db'),
+	DATABASE=('/service/flaskr.db'),
 	SECRET_KEY='development key',
 	USERNAME='admin',
 	PASSWORD='default'
@@ -178,11 +178,8 @@ def diary():
     db=get_db()	
     db.row_factory = dict_factory
     
-    cur = db.cursor()
 
-
-
-    cursor = cur.execute('SELECT * FROM members')  
+    cursor = db.execute('SELECT * FROM diary_entries')  
     a = cursor.fetchall()
     print a 
     return make_json_response(a)
@@ -208,9 +205,8 @@ def diary_create():
 	
 	#====code to insert diary====
 	db=get_db()
-	cur = db.cursor()
 	#get max id (TBD: get max id of entry by logged in user)	
-	cursor = cur.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
+	cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
 	a = cursor.fetchone()
 	#set id as maxid+1
 	diary_id = 1 if not a else 1 + int(a[0])
@@ -218,7 +214,7 @@ def diary_create():
 	#insert diary entry
 
 	# cur.execute('insert into members')
-	cur.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, datetime.now() ,"author", public, text])
+	db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, datetime.now() ,"author", public, text])
 	
 
 	db.commit()
