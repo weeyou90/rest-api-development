@@ -62,11 +62,11 @@ class DiaryEntry(db.Model):
 
     def __init__(self, id, title, author, publish_date, public, text):
         id = id
-        self.title = email
-        self.author = fullname
-        self.publish_date = age
+        self.title = title
+        self.author = author
+        self.publish_date = publish_date
         self.public = public
-	self.text = text
+        self.text = text
 
 '''
 #================================================================
@@ -289,31 +289,13 @@ def users():
 
 @app.route("/diary", methods = ['GET'])
 def diary(): 
-    diary_entries = [{
-      "id": 1,
-      "title": "My First Project",
-      "author": "ashrugged",
-      "publish_date": "2013-02-27T13:37:00+00:00",
-      "public": 'true',
-      "text": "If you don't know, the thing to do is not to get scared, but to learn."
-    },
-    {
-      "id": 2,
-      "title": "A New Lesson!",
-      "author": "audrey123talks",
-      "publish_date": "2013-02-29T13:37:00+00:00",
-      "public": 'true',
-      "text": "Check out my latest video!"
-    }]
-
-    #code to view diary
-    db=get_db()	
-    db.row_factory = dict_factory
-
-    cursor = db.execute('SELECT * FROM diary_entries')  
-    a = cursor.fetchall()
-   	
-    return make_json_response(a)
+	diary_entry = DiaryEntry(1, "a", "b", datetime.now(), True, "yay")
+	db.session.add(diary_entry)
+	db.session.commit()
+	diary_entries = DiaryEntry.query.filter_by(id=1).first(); 
+	# for i in diary_entries:
+	# 	print i  
+	return make_json_response(None)
 
 
 @app.route("/diary/create", methods=['POST'])
