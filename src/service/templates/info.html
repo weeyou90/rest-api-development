@@ -2,7 +2,7 @@
 {% block title %}About me{% endblock %}
 {% block body %}
 
-
+  {% if users is defined %}
 	<div class="container jumbo-container">
   		<div class="jumbotron">
     		<h1>Welcome, {{users.name}}</h1>      
@@ -28,6 +28,8 @@
 	  </div>
 	</div>
 </div>
-
+{% else %}
+  
+{% endif %}
 
 {% endblock %}
