@@ -1,0 +1,46 @@
+<html>
+    <head>
+    </head>
+    <style type="text/css">
+        .error{
+            color:red;
+        };
+
+    </style>
+    <body>
+        
+        <h1>Secret Diary Front End</h1>
+        {% block body %}
+    <ul>
+        {% if users is defined %}
+        <li>Welcome {{ users.name }}</li>
+        {% endif %}
+    </ul>
+
+{% endblock %}
+        <p>Requirements for the front end are as follows:</p>
+        <ul>
+            <li><a href="{{url_for('users_register')}}">Register a user</a></li>
+            <!-- {% block content %}{% endblock %} -->
+            <li><a href="{{url_for('users_authenticate')}}"> Login </a></li>
+            <li><a href="{{url_for('users_expire')}}">Logout</li>
+            <li><a href="{{url_for('users')}}">Retrieve user information</a></li>
+            <li>Display all public diary entries</li>
+            <li>Display an authenticated user's diary entries</li>
+            <li>Create a new diary entry</li>
+            <li>Delete an existing diary entry</li>
+            <li>Toggle the permissions on an existing diary entry</li>
+        </ul>
+        <!-- the following is a demo on how you may display data retrieved from
+             the API
+        -->
+        <div id="demo_heartbeat">
+        </div>
+        <div id="demo_members">
+        </div>
+        <div id="demo_short_answer_questions">weeee
+        </div>
+        <script src="{{url_for('static', filename='demo.js')}}"></script>
+        
+    </body>
+</html>

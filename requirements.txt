@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+Jinja2
+SQLAlchemy
+Werkzeug
+wsgiref
+Flask-WTF
+alembic
+flask_sqlalchemy
+itsdangerous

@@ -1,0 +1,52 @@
+<!-- {% exteds "index.html" %}
+
+{% block content %} -->
+    <h1>
+    	Sign up here
+    </h1>
+    	<form action = "/users/register", methods="post">
+    		<table>
+    			<tbody>
+    				<tr>
+    					<td>
+    						<label for="username">username</label>
+    					</td>
+    					<td>
+    						<input type="text" name="username" value="{{username}}" />
+    						<span class="error">{{username_error}}</span>
+    					</td>
+    				</tr>
+    				<tr>
+    					<td>
+    						<label for="password">password</label>
+    					</td>
+    					<td>
+    						<input type="text" name="password" value="{{password}}" />
+    						<span class="error">{{password_error}}</span>
+    					</td>
+    				</tr>
+    				<tr>
+    					<td>
+    						<label for="fullname">fullname</label>
+    					</td>
+    					<td>
+    						<input type="text" name="fullname" value="{{fullname}}" />
+    						<span class="error">{{fullname_error}}</span>
+    					</td>
+    				</tr>
+    				<tr>
+    					<td>
+    						<label for="age">age</label>
+    					</td>
+    					<td>
+    						<input type="text" name="age" value="{{age}}" />
+    						<span class="error">{{age_error}}</span>
+    					</td>
+    				</tr>
+    			</tbody>>
+    		</table>
+    	<input type="submit" value="Submit"/>
+    </form>
+
+<!-- {% endblock %} -->
+
