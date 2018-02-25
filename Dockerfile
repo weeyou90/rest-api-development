@@ -16,6 +16,8 @@ RUN pip install -U setuptools pip wheel && pip install -r /requirements.txt
 # RUN pip install -U flask_wtf
 # RUN pip install -U SQLAlchemy
 
+
+RUN apt-get install -y sqlite3
 RUN echo "ServerName localhost  " >> /etc/apache2/apache2.conf
 RUN echo "$user     hard    nproc       20" >> /etc/security/limits.conf
 WORKDIR ./src

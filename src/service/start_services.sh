@@ -1,8 +1,11 @@
 #!/bin/bash
 
 apachectl start
-# cd service
-# gunicorn --config=gunicorn.py app:app
-# cd ..
-python /service/app.py
-# run -v ${pwd}/service:/opt/service/ -i -t examp
+ls
+cd src/service
+sqlite3 -line flaskr.db "insert into diary_entries values (1,2,3,4,5,6)"
+sqlite3 -line flaskr.db "select * from diary_entries"
+
+export FLASK_APP=src/service/app.py
+python ./app.py
+
