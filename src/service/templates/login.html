@@ -6,13 +6,13 @@
 
 <div class = "login">
 <p> If you are a regular user and have signed up before then don't hesitate to login below. It will take only two minutes and you will be able to access a whole lot more goodies!</p>
-{% if session['user_email'] %} 
+{% if session['user_name'] %} 
 <p class="login-box">You are already logged in. There is nothing much you can do over here right now.</p>
 {% else %}
 <form class = "login-form" method="POST" action="{{url_for('users_authenticate')}}">
 <div class="inner-form-login">
     {{ form.hidden_tag() }}
-    <p class="name">Email: {{ form.name(size=20) }}</p>
+    <p class="name">Name: {{ form.name(size=20) }}</p>
     {% if form.name.errors %}
 	    <ul class=errors>
 	    {% for error in form.name.errors %}

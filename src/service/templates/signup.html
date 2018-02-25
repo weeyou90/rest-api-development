@@ -38,14 +38,6 @@
         </ul>
         {% endif %}
 
-  <p class="email1">Email: {{ form.email }}</p>
-         {% if form.email.errors %}
-        <ul class=errors>
-        {% for error in form.email.errors %}
-          <li class = "error">{{ error }}</li>
-        {% endfor %}
-        </ul>
-        {% endif %}
     <p class="password">Password: {{ form.password(type = "password") }}</p>
         {% if form.password.errors %}
 
