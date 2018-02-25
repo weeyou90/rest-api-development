@@ -396,19 +396,29 @@ def new_entry():
      form = NewEntryForm()
      if session['user_name']:   
 	if form.validate_on_submit():
-		db=get_db()
                 try:
-                    db.execute('insert into diary_entries(title,author,publish_date,public,text) values (?,?,?,?)', [form.title.data,user_name,publishDate, form.public.data, form.text.data])
-                    db.commit()
-                    db.close()
+                   print("call rest services")
 		except:
                     print('Insert error')
                     return redirect(url_for('index'))
 	else:
             render_template('newEntry.html', form=form)	
      else:
-        return render_template('newEntry.html', form=form)
+        return render_template('unauthorised.html', form=form)
 
+
+@app.route("/diary/myEntries")
+def my_entries():
+    if session['user_name']:
+	db=get_db()
+	try:
+	    cursor = db.execute('select * from diary_enties where author=user_name')
+	    myEntries = cursor.fetchone()
+            return render_template('myEntries.html', myEntries = myEntries)
+	except:
+            return render_template('myEntries.html')
+    else:
+        return render_template('unauthorised.html')
 
 # working
 if __name__ == '__main__':

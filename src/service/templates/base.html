@@ -23,10 +23,10 @@
       </li>
       {% if users is defined %}
       <li class="nav-item active">
-        <a class="nav-link" href="./">New Entry</a>
+        <a class="nav-link" href="{{url_for('new_entry')}}">New Entry</a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href=".//">My Entries</a>
+        <a class="nav-link" href="{{url_for('my_entries')}}">My Entries</a>
       </li>
       {% endif %}
 
