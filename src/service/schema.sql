@@ -4,7 +4,7 @@ create table if not exists users (
   password varchar(255) not null, 
   fullname varchar(255) not null, 
   age int, 
-  token varchar(100) not null unique
+  token varchar(100) not null
 );
 
 create table if not exists diary_entries (

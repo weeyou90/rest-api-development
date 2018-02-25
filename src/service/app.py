@@ -24,7 +24,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-	DATABASE=('flaskr.db'),
+	DATABASE=('/src/service/flaskr.db'),
 	SECRET_KEY='development key',
 	USERNAME='admin',
 	PASSWORD='default'
@@ -40,9 +40,15 @@ ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/u
 #================================================================
 #        D B    H E L P E R  F U N C TI O N S
 #================================================================
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 def connect_db():
 	rv = sqlite3.connect(app.config['DATABASE'])
-	rv.row_factory = sqlite3.Row
+	rv.row_factory = dict_factory
 	return rv
 
 def get_db():
@@ -155,6 +161,7 @@ def index():
 
 
 
+
 @app.route("/meta/heartbeat")
 def meta_heartbeat():
     """Returns true"""
@@ -188,17 +195,17 @@ def users_register():
 	form = SignupForm()
 	if form.validate_on_submit():
 		db=get_db()
-		cursor = db.execute('SELECT * FROM users where name = form.name.data')
-		user_name = cursor.fetchone()
-		make_json_response(user_name)
-		diary_id = 1 if not a else 1 + int(a[0])
-		if user_name is None:
-			try:
-				db.execute('insert into users (id,name,password,fullname,age) values (?,?,?,?,?)', [diary_id,form.name.data, form.password.data, form.fullname.data ,form.age.data])
-				db.commit()
-				db.close()
-			except:
-				print('Insert error')
+		submitted_name = form.name.data
+		cursor = db.execute('SELECT * FROM users where name = (?)' , [submitted_name])
+		a = cursor.fetchone()
+		user_id = 1 if not a else 1 + int(a['id'])
+		if a is None: 
+			# try:
+			pw = generate_password_hash(form.password.data)
+			db.execute('insert into users (id,name,password,fullname,age, token) values (?,?,?,?,?, ?)', [user_id,form.name.data, pw, form.fullname.data ,form.age.data, '123'])
+			#take note of token
+			db.commit()
+			db.close()
 			session['user_name'] = form.name.data
 			flash('Thanks for registering. You are now logged in!')
 			return redirect(url_for('index'))
@@ -207,6 +214,7 @@ def users_register():
 			render_template('signup.html', form=form)
 	return render_template('signup.html', form=form)
 
+
 @app.route("/users/authenticate", methods=('GET','POST'))
 def users_authenticate():
 	if session['user_name']:
@@ -214,13 +222,12 @@ def users_authenticate():
 	form = LoginForm()
 	if form.validate_on_submit():
 		db=get_db()
-		user_name = form.name.data
-		cursor = db.execute('SELECT * FROM users where name = user_name')  
+		form_name = form.name.data
+		cursor = db.execute('SELECT * FROM users where name = ?', [form_name])  
 		user = cursor.fetchone()
-		make_json_response(user)
-		check_correct_password = check_password_hash(user.password, form.password.data) #double check pls! 
-		if user is not None and check_correct_password:
-			session['user_name'] = user.name
+		#check_correct_password = check_password_hash(user['password', form.password.data) #double check pls! 
+		if user is not None and check_password_hash(user['password'], form.password.data) is True:
+			session['user_name'] = user['name']
 			flash('Thanks for logging in')
 			return redirect(url_for('index'))
 		else:
@@ -249,10 +256,10 @@ def users_expire():
 @app.route("/users")
 def users():
     if session['user_name']:
-    	db=get_db()
-    	cursor = db.execute('SELECT * FROM users where session = user_name')  
+    	print session['user_name']
+	db=get_db()
+    	cursor = db.execute('SELECT * FROM users where session = (?)', [session['user_name']])  
     	users = cursor.fetchall()
-    	make_json_response(users)
         # users = User.query.filter_by(name=session['user_name']).first()
         return render_template('info.html', users=users) 
     else:
@@ -317,7 +324,7 @@ def diary_create():
 	cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
 	a = cursor.fetchone()
 	#set id as maxid+1
-	diary_id = 1 if not a else 1 + int(a[0])
+	diary_id = 1 if not a else 1 + int(a['id'])
 
 	#insert diary entry
 
