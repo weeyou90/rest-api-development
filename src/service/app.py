@@ -255,11 +255,13 @@ def users_expire():
 
 @app.route("/users")
 def users():
+
     if session['user_name']:
     	print session['user_name']
+	print session
 	db=get_db()
-    	cursor = db.execute('SELECT * FROM users where session = (?)', [session['user_name']])  
-    	users = cursor.fetchall()
+    	cursor = db.execute('SELECT * FROM users where name = (?)', [session['user_name']])  
+    	users = cursor.fetchone()
         # users = User.query.filter_by(name=session['user_name']).first()
         return render_template('info.html', users=users) 
     else:
