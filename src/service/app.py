@@ -127,11 +127,14 @@ def make_json_response(data, status=True, code=200):
 
 @app.before_request
 def check_user_status():
-    ## need to change to token
     if 'user_name' not in session:
-        # session['user_email'] = None
         session['user_name'] = None
-
+        session['token'] = None
+    # if request.method =="POST":
+    #     token = session.pop('_csrf_token',None)
+    #     if not token or token != request.form.get('_csrf_token'):
+    #         abort(403)
+    
 
 def is_logged_in(token):
 # TBD: check if token is issued
@@ -142,7 +145,7 @@ def is_logged_in(token):
 # =======================================================
 @app.route("/")
 def index():
-    if session['user_name']:
+    if session['token']:
         db=get_db()
         session_user_name = session['user_name']
         cursor = db.execute('SELECT * FROM users where name =(?)' ,[session_user_name])  
@@ -202,7 +205,7 @@ def users_register():
 		if a is None: 
 			# try:
 			pw = generate_password_hash(form.password.data)
-			db.execute('insert into users (name,password,fullname,age, token) values (?,?,?,?, ?)', [form.name.data, pw, form.fullname.data ,form.age.data, '123'])
+			db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [form.name.data, pw, form.fullname.data ,form.age.data, '123'])
 			#take note of token
 			db.commit()
 			db.close()
@@ -217,7 +220,7 @@ def users_register():
 
 @app.route("/users/authenticate", methods=('GET','POST'))
 def users_authenticate():
-	if session['user_name']:
+	if session['token']:
 		return redirect(url_for('index'))
 	form = LoginForm()
 	if form.validate_on_submit():
@@ -227,11 +230,12 @@ def users_authenticate():
 		user = cursor.fetchone()
 		#check_correct_password = check_password_hash(user['password', form.password.data) #double check pls! 
 		if user is not None and check_password_hash(user['password'], form.password.data) is True:
+			session['token'] = uuid4()
 			session['user_name'] = user['name']
 			flash('Thanks for logging in')
 			return redirect(url_for('index'))
 		else:
-			flash('Sorry! no user exists with this email and password')
+			flash('Sorry! no user exists with this username and password')
 			return render_template('login.html', form=form)
 	return render_template('login.html', form=form)
 
@@ -255,13 +259,10 @@ def users_expire():
 
 @app.route("/users")
 def users():
-
-    if session['user_name']:
-    	print session['user_name']
-	print session
-	db=get_db()
-    	cursor = db.execute('SELECT * FROM users where name = (?)', [session['user_name']])  
-    	users = cursor.fetchone()
+    if session['token']:
+        db=get_db()
+        cursor = db.execute('SELECT * FROM users where name = (?)', [session['user_name']])  
+        users = cursor.fetchone()
         # users = User.query.filter_by(name=session['user_name']).first()
         return render_template('info.html', users=users) 
     else:

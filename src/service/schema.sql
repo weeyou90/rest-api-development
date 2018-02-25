@@ -1,5 +1,5 @@
 create table if not exists users (
-  id int primary key, 
+  id integer primary key not null, 
   name varchar (255) not null, 
   password varchar(255) not null, 
   fullname varchar(255) not null, 
