@@ -401,7 +401,6 @@ def new_entry():
                     db.close()
 		except:
                     print('Insert error')
-                    session['user_name'] = form.name.data
                     return redirect(url_for('index'))
 	else:
             render_template('signup.html', form=form)	
