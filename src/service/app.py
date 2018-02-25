@@ -219,12 +219,12 @@ def users_expire():
 
 @app.route("/users")
 def users():
-    # if session['user_name']:
-    users = User.query.filter_by(name=session['user_name']).first()
-    return render_template('info.html', users=users) 
-	# if (1==1):
-	# 	return make_json_response(None)
-	# return make_json_response(None, False)
+    if session['user_name']:
+        users = User.query.filter_by(name=session['user_name']).first()
+        return render_template('info.html', users=users) 
+    else:
+        return render_template('authorised.html')
+
 
 if __name__ == '__main__':
     # Change the working directory to the script directory
