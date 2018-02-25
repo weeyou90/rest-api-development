@@ -21,7 +21,7 @@ RUN echo "$user     hard    nproc       20" >> /etc/security/limits.conf
 # WORKDIR ./src
 
 ADD ./src/service /service
-ADD ./src/html /var/www/html
+# ADD ./src/html /var/www/html
 COPY . /src
 EXPOSE 80
 EXPOSE 8080
