@@ -220,8 +220,8 @@ def users_expire():
 @app.route("/users")
 def users():
     # if session['user_name']:
-    user = User.query.filter_by(name=session['user_name']).first()
-    return render_template('info.html', user=user) 
+    users = User.query.filter_by(name=session['user_name']).first()
+    return render_template('info.html', users=users) 
 	# if (1==1):
 	# 	return make_json_response(None)
 	# return make_json_response(None, False)
