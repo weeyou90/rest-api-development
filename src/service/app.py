@@ -139,9 +139,9 @@ def index():
     if session['user_name']:
 		db=get_db()
 		session_user_name = session['user_name']
-		cursor = db.execute('SELECT * FROM users where name = session_user_name')  
+		print session_user_name
+		cursor = db.execute('SELECT * FROM users where name = (?)',  [session_user_name])  
 		user = cursor.fetchone()
-		make_json_response(user_name)
 		return render_template('index.html', users=user)
 
         # user = User.query.filter_by(name=session['user_name']).first()
@@ -185,17 +185,18 @@ def users_register():
 	form = SignupForm()
 	if form.validate_on_submit():
 		db=get_db()
-		cursor = db.execute('SELECT * FROM users where name = form.name.data')
-		user_name = cursor.fetchone()
-		make_json_response(user_name)
-		diary_id = 1 if not a else 1 + int(a[0])
-		if user_name is None:
-			try:
-				db.execute('insert into users (id,name,password,fullname,age) values (?,?,?,?,?)', [diary_id,form.name.data, form.password.data, form.fullname.data ,form.age.data])
-				db.commit()
-				db.close()
-			except:
-				print('Insert error')
+		submitted_name = form.name.data
+		cursor = db.execute('SELECT * FROM users where name = (?)' , [submitted_name])
+		a = cursor.fetchone()
+		user_id = 1 if not a else 1 + int(a[0])
+		if a is None:  #double checkk PLS!!!
+			# try:
+			db.execute('insert into users (id,name,password,fullname,age, token) values (?,?,?,?,?, ?)', [user_id,form.name.data, form.password.data, form.fullname.data ,form.age.data, '123'])
+			#take note of token
+			db.commit()
+			db.close()
+			# except:
+			# 	print('Insert error')
 			session['user_name'] = form.name.data
 			flash('Thanks for registering. You are now logged in!')
 			return redirect(url_for('index'))
@@ -247,7 +248,7 @@ def users_expire():
 def users():
     if session['user_name']:
     	db=get_db()
-    	cursor = db.execute('SELECT * FROM users where session = user_name')  
+    	cursor = db.execute('SELECT * FROM users where session = (?)', [session['user_name']])  
     	users = cursor.fetchall()
     	make_json_response(users)
         # users = User.query.filter_by(name=session['user_name']).first()
