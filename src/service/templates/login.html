@@ -2,12 +2,19 @@
 {% block title %}Log in {% endblock %}
 {% block body %}
 
+<div class="container jumbo-container">
+  		<div class="jumbotron">
+    		<h1>Login</h1>      
+    		<p>If you are a regular user and have signed up before then don't hesitate to login below.<br> It will take only two minutes and you will be able to access a whole lot more goodies!</p>
+  		</div>
+	</div>
 
 
-<div class = "login">
-<p> If you are a regular user and have signed up before then don't hesitate to login below. It will take only two minutes and you will be able to access a whole lot more goodies!</p>
+
+<div class = "container">
+
 {% if session['user_name'] %} 
-<p class="login-box">You are already logged in. There is nothing much you can do over here right now.</p>
+<p class="login-box">You are already logged in.</p><p>There is nothing much you can do over here right now.</p>
 {% else %}
 <form class = "login-form" method="POST" action="{{url_for('users_authenticate')}}">
 <div class="inner-form-login">

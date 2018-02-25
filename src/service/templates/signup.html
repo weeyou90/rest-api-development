@@ -2,11 +2,17 @@
 
 {% block body %}
 
-<div class="container"
 
 
 
 
+<div class="container jumbo-container">
+  		<div class="jumbotron">
+    		<h1>Sign up</h1>      
+    		<p>It will only take you a minute!</p>
+  		</div>
+	</div>
+<div class="container">
 
 <div class = "login">
 <form class = "login-form" method="POST" action="{{url_for('users_register')}}">
