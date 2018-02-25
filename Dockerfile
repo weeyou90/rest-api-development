@@ -1,17 +1,21 @@
 FROM ubuntu:latest
-RUN apt-get update && apt-get install --assume-yes apt-utils
+RUN apt-get update 
 RUN apt-get install -y python-pip
 RUN apt-get install -y apache2
 RUN apt-get install -y gunicorn
+COPY requirements.txt /requirements.txt
 RUN pip install --upgrade pip
-RUN pip install -U bcrypt
-RUN pip install -U Flask
-RUN pip install -U pip
-RUN pip install -U flask_sqlalchemy
-RUN pip install -U flask-cors
-RUN pip install -U SQLAlchemy
-# RUN pip install -r "./requirements.txt"
-CMD ["pip install -r", "./requirements.txt"]
+RUN pip install -U setuptools pip wheel && pip install -r /requirements.txt
+
+# RUN pip install -U bcrypt
+# RUN pip install -U jinja2
+# RUN pip install -U Flask
+# RUN pip install -U pip
+# RUN pip install -U flask_sqlalchemy
+# RUN pip install -U flask-cors
+# RUN pip install -U flask_wtf
+# RUN pip install -U SQLAlchemy
+
 RUN echo "ServerName localhost  " >> /etc/apache2/apache2.conf
 RUN echo "$user     hard    nproc       20" >> /etc/security/limits.conf
 # WORKDIR ./src

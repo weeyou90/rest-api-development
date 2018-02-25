@@ -7,7 +7,8 @@ from flask import Flask,request,session,abort,jsonify,redirect,render_template, 
 from flask_sqlalchemy import SQLAlchemy
 import json
 import os
-from model import db
+from uuid import uuid4
+# from model import db
 from forms import SignupForm, LoginForm
 # from model import *
 
@@ -29,16 +30,23 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120))
     password = db.Column(db.String(120))
+    ## remove email page
+    # email = db.Column(db.String(240))
     fullname = db.Column(db.String(120))
-    age = db.Column(db.Integer)
-    email = db.Column(db.String(240))
+    age = db.Column(db.Integer) 
+    token = db.Column(db.VARCHAR(100), unique=True)
 
-    def __init__(self, name, email, password, fullname, age):
+    def __init__(self, name, password, fullname, age):
         self.name = name
-        self.email = email
+        self.set_password(password)
+        # self.email = email
         self.fullname = fullname
         self.age = age
-        self.set_password(password)
+        self.token = str(uuid4())
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -69,8 +77,9 @@ def make_json_response(data, status=True, code=200):
 
 @app.before_request
 def check_user_status():
-    if 'user_email' not in session:
-        session['user_email'] = None
+    ## need to change to token
+    if 'user_name' not in session:
+        # session['user_email'] = None
         session['user_name'] = None
 
 @app.route('/', methods=('GET', 'POST'))
@@ -110,25 +119,25 @@ def meta_short_answer_questions():
 # @verify_required_params(['email', 'password', 'name'])
 # @validate_email_format
 def users_register():
-    if session['user_email']:
-        flash('you are already signed up')
-        return redirect(url_for('index'))
+    # if session['user_email']:
+    #     flash('you are already signed up')
+    #     return redirect(url_for('index'))
     form = SignupForm()
     if form.validate_on_submit():
-        user_email = User.query.filter_by(email=form.email.data).first()
-        if user_email is None:
+        user_name = User.query.filter_by(name=form.name.data).first()
+        if user_name is None:
             try:
-                user = User(form.name.data, form.email.data, form.password.data, form.fullname.data, form.age.data)
+                user = User(name=form.name.data, password=form.password.data,fullname= form.fullname.data, age= form.age.data)
                 db.session.add(user)
                 db.session.commit()
             except:
                 print('Insert error')
-            session['user_email'] = form.email.data
+            # session['user_name'] = form.email.data
             session['user_name'] = form.name.data
             flash('Thanks for registering. You are now logged in!')
             return redirect(url_for('index'))
         else:
-            flash("A User with that email already exists. Choose another one!", 'error')
+            flash("A User with that name already exists. Choose another one!", 'error')
             render_template('signup.html', form=form)
     return render_template('signup.html', form=form)
     # # #Register a user
@@ -171,13 +180,13 @@ def users_register():
 
 @app.route("/users/authenticate", methods=('GET','POST'))
 def users_authenticate():
-    if session['user_email']:
+    if session['user_name']:
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(name=form.name.data).first()
         if user is not None and user.check_password(form.password.data):
-            session['user_email'] = form.email.data
+            # session['user_email'] = form.email.data
             session['user_name'] = user.name
             flash('Thanks for logging in')
             return redirect(url_for('index'))

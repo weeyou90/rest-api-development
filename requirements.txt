@@ -6,5 +6,8 @@ Werkzeug
 wsgiref
 Flask-WTF
 alembic
-flask_sqlalchemy
 itsdangerous
+bcrypt
+jinja2
+flask-cors
+flask_wtf
