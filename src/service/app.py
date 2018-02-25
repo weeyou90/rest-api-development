@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-	DATABASE=os.path.join(app.root_path, 'flaskr.db'),
+	DATABASE=os.path.join(app.root_path, '/flaskr.db'),
 	SECRET_KEY='development key',
 	USERNAME='admin',
 	PASSWORD='default'
@@ -39,10 +39,14 @@ def get_db():
 	return g.sqlite_db
 
 def init_db():
-	db = get_db()
-	with app.open_resource('schema.sql', mode='r') as f:
-		db.cursor().executescript(f.read())
-	db.commit()
+	with app.app_context():
+		db = get_db()
+		with app.open_resource('schema.sql', mode='r') as f:
+			try:
+				db.cursor().executescript(f.read())
+			except sqlite3.OperationalError, msg:
+				print msg
+		db.commit()
 
 @app.cli.command('initdb')
 def initdb_command():
@@ -173,10 +177,14 @@ def diary():
     #code to view diary
     db=get_db()	
     db.row_factory = dict_factory
+    
+    cur = db.cursor()
 
-    cursor = db.execute('SELECT * FROM diary_entries')  
+
+
+    cursor = cur.execute('SELECT * FROM members')  
     a = cursor.fetchall()
-   	
+    print a 
     return make_json_response(a)
 
 
@@ -200,16 +208,22 @@ def diary_create():
 	
 	#====code to insert diary====
 	db=get_db()
-	
+	cur = db.cursor()
 	#get max id (TBD: get max id of entry by logged in user)	
-    	cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
+	cursor = cur.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
 	a = cursor.fetchone()
 	#set id as maxid+1
 	diary_id = 1 if not a else 1 + int(a[0])
 
 	#insert diary entry
-	db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, datetime.now() ,"author", public, text])
+
+	# cur.execute('insert into members')
+	cur.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, datetime.now() ,"author", public, text])
+	
+
 	db.commit()
+	db.close()
+
 
 	return make_json_response(diary_id,True,201)
 
