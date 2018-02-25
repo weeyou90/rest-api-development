@@ -24,7 +24,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-	DATABASE=('flaskr.db'),
+	DATABASE=('/src/service/flaskr.db'),
 	SECRET_KEY='development key',
 	USERNAME='admin',
 	PASSWORD='default'

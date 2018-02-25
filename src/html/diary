@@ -1,0 +1,15 @@
+<div class="jumbotron">
+    <h1>Diary Entries </h1>
+
+    <nav>
+      <ul >
+        <li ><a href="main">Display all public entries</a></li>
+        <li ><a href="main">Display an authenticated user's diary entries</a></li>
+        <li ><a href="main">Create a new diary entry</a></li>
+        <li ><a href="main">Delete an existing diary entry</a></li>
+        <li ><a href="#">Toggle the permissions on an existing diary entry</a></li>
+    
+      </ul>
+    </nav>
+
+</div>
