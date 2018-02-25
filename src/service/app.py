@@ -226,7 +226,6 @@ def users():
 	# 	return make_json_response(None)
 	# return make_json_response(None, False)
 
-
 if __name__ == '__main__':
     # Change the working directory to the script directory
     abspath = os.path.abspath(__file__)
