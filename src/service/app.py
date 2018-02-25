@@ -2,8 +2,8 @@
 
 # from flask_cors import CORS
 # from app import app, db 
-# from werkzeug import generate_password_hash, check_password_hash
-# from flask import Flask,request,session,abort,jsonify,redirect,render_template, escape, make_response, url_for, flash
+from werkzeug import generate_password_hash, check_password_hash
+from flask import Flask,request,session,abort,jsonify,redirect,render_template, escape, make_response, url_for, flash
 # from flask_sqlalchemy import SQLAlchemy
 import json
 import os
@@ -125,8 +125,6 @@ def check_user_status():
     if 'user_name' not in session:
         # session['user_email'] = None
         session['user_name'] = None
-
-@app.route('/', methods=('GET', 'POST'))
 
 
 def is_logged_in(token):
@@ -266,7 +264,8 @@ def users_authenticate():
         # user_name = User.query.filter_by(name=form.name.data).first()
 		user = cursor.fetchone()
 		make_json_response(user)
-		if user is not None and user.check_password(form.password.data):
+		check_correct_password = check_password_hash(user.password, form.password.data) #double check pls! 
+		if user is not None and check_correct_password:
 			session['user_name'] = user.name
 			flash('Thanks for logging in')
 			return redirect(url_for('index'))
