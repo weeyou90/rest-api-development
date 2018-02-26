@@ -160,16 +160,10 @@ def index():
     posts = cursor2.fetchall()
     return render_template('index.html', posts=posts )
 
-	  
-
-
-
-
 @app.route("/meta/heartbeat")
 def meta_heartbeat():
     """Returns true"""
     return make_json_response(None)
-
 
 @app.route("/meta/members")
 def meta_members():
