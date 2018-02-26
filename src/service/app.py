@@ -161,16 +161,10 @@ def index():
     posts = cursor2.fetchall()
     return render_template('index.html', posts=posts )
 
-	  
-
-
-
-
 @app.route("/meta/heartbeat")
 def meta_heartbeat():
     """Returns true"""
     return make_json_response(None)
-
 
 @app.route("/meta/members")
 def meta_members():
@@ -406,7 +400,7 @@ def new_entry():
 	else:
             render_template('newEntry.html', form=form)	
      else:
-        return render_template('unauthorised.html', form=form)
+        return render_template('newEntry.html', form=form)
 
 
 @app.route("/diary/myEntries")
@@ -420,7 +414,7 @@ def my_entries():
 	except:
             return render_template('myEntries.html')
     else:
-        return render_template('unauthorised.html')
+        return render_template('myEntries.html')
 
 # working
 if __name__ == '__main__':
