@@ -405,7 +405,7 @@ def new_entry():
 	else:
             render_template('newEntry.html', form=form)	
      else:
-        return render_template('unauthorised.html', form=form)
+        return render_template('newEntry.html', form=form)
 
 
 @app.route("/diary/myEntries")
@@ -419,7 +419,7 @@ def my_entries():
 	except:
             return render_template('myEntries.html')
     else:
-        return render_template('unauthorised.html')
+        return render_template('myEntries.html')
 
 # working
 if __name__ == '__main__':

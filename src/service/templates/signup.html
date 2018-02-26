@@ -14,7 +14,9 @@
 <form class = "login-form" method="POST" action="{{url_for('users_register')}}">
     <div class = "inner-form">
 {{ form.hidden_tag() }}
-    <p class="fullname">Fullname: {{ form.fullname }}</p>
+    <label>Fullname</label>
+
+{{ form.fullname(class="form-control") }}
          {% if form.fullname.errors %}
         <ul class=errors>
         {% for error in form.fullname.errors %}
@@ -23,7 +25,8 @@
         </ul>
     {% endif %}   
 
-    <p class="age">Age: {{ form.age }}</p>
+     <label>Age  </label>
+{{ form.age(class="form-control") }}
          {% if form.age.errors %}
         <ul class=errors>
         {% for error in form.age.errors %}
@@ -31,7 +34,7 @@
         {% endfor %}
         </ul>
     {% endif %} 
-    <p class="name">User Name:    {{form.name}}   </p>
+     <label>User Name  </label>    {{form.name(class="form-control")}}  
         {% if form.name.errors %}
         <ul class=errors>
         {% for error in form.name.errors %}
@@ -40,7 +43,7 @@
         </ul>
         {% endif %}
 
-    <p class="password">Password: {{ form.password(type = "password") }}</p>
+    <p class="password">Password {{ form.password(type = "password",class="form-control") }}</p>
         {% if form.password.errors %}
 
         <ul class=errors>
@@ -49,7 +52,7 @@
         {% endfor %}
         </ul>
         {% endif %}
-    <p class="confirm">Repeat Password: {{ form.confirm(type = "password") }}</p>
+    <p class="confirm">Repeat Password {{ form.confirm(type = "password",class="form-control") }}</p>
         {% if form.confirm.errors %}
         <ul class=errors>
         {% for error in form.confirm.errors %}

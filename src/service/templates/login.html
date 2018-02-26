@@ -19,7 +19,8 @@
 <form class = "login-form" method="POST" action="{{url_for('users_authenticate')}}">
 <div class="inner-form-login">
     {{ form.hidden_tag() }}
-    <p class="name">Name: {{ form.name(size=20) }}</p>
+    <label>Name</label>
+    {{ form.name(class="form-control") }}
     {% if form.name.errors %}
 	    <ul class=errors>
 	    {% for error in form.name.errors %}
@@ -27,7 +28,8 @@
 	    {% endfor %}
 	    </ul>
     {% endif %}
-    <p> Password: {{ form.password(size=20, type = "password") }}</p>
+    <label>Password</label>
+	{{ form.password(type = "password",class="form-control") }}
     {% if form.password.errors %}
 	    <ul class=errors>
 	    {% for error in form.password.errors %}
