@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}About me{% endblock %}
+{% block body %}
+
+  {% if users is defined %}
+	<div class="container jumbo-container">
+  		<div class="jumbotron">
+    		<h1>Profile of {{users.name}}</h1>      
+    		<p>View your personal information below</p>
+  		</div>
+	</div>
+
+<div class="container">
+	<div class="card card-outline-primary mb-3">
+	  <div class="card-block">
+	    <blockquote class="card-blockquote">
+
+
+
+<ul class="list-group list-group-flush">
+  <li class="list-group-item">Full Name    : {{users.fullname}}</li>
+  <li class="list-group-item">User Name    : {{users.name}}</li>
+  <li class="list-group-item">Age          : {{users.age}}</li>
+ 
+  
+</ul>
+	    </blockquote>
+	  </div>
+	</div>
+</div>
+{% else %}
+  
+{% endif %}
+
+{% endblock %}

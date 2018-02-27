@@ -1,0 +1,85 @@
+<html>
+<head>
+	<title>{% block title %}{% endblock %}</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="{{url_for('static',  filename = 'css/main.css')}}" type="text/css">
+ 	<link rel="stylesheet" href="{{url_for('static', filename='bootstrap.min.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='stylesheet.css')}}">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+	{% block head %}
+	{% endblock %}
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  			<a class="navbar-brand" href="{{url_for('index')}}">My Secret Diary</a>
+  			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="{{url_for('index')}}">Home</a>
+      </li>
+      {% if users is defined %}
+      <li class="nav-item active">
+        <a class="nav-link" href="{{url_for('new_entry')}}">New Entry</a>
+      </li>
+      {% endif %}
+
+    </ul>
+    <ul class="nav navbar-nav"> 
+        {% if users is defined %}
+        
+	<li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Hi {{ users.name }}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="{{url_for('users')}}">Profile</a>     
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{{url_for('users_expire')}}">Logout</a>
+        </div>
+      </li>
+	
+	{% else %}
+	<li class="nav-item active">
+ 		<a class="nav-link" href="{{url_for('users_authenticate')}}">Login</a>
+	</li>
+	<li class="nav-item active">
+ 		<a class="nav-link" href="{{url_for('users_register')}}">Register</a>
+	</li>
+        {% endif %}
+     </ul>
+    
+  </div>
+</nav>
+
+
+
+
+
+	<div class = "flash-messages">
+	{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+		<ul class=flashes>
+		{% for category, message in messages %}
+		<li class = {{category}}>{{ message }}</li>
+		{% endfor %}
+		</ul>
+		{% endif %}
+	{% endwith %}
+	</div>
+
+
+  	<script src="{{url_for('static', filename='demo.js')}}"></script>
+        <script src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+        <script src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
+       
+	{% block body%}
+	{% endblock %}
+    </div>
+</body>
+</html>
+
