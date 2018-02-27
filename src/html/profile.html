@@ -8,7 +8,7 @@
 
 
 </head>
-<body onload="getData()">
+<body onload="getData()">>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   			<a class="navbar-brand" href="{{url_for('index')}}">My Secret Diary</a>
   			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,23 +30,21 @@
   	
 	<div class="container jumbo-container">
   		<div class="jumbotron">
-    		<h1>My Secret Diary</h1>      
-    		<p>See everyone's diary here.</p>
+    		<h1>Profile</h1>      
+    		<p>See your information here</p>
   		</div>
 	</div>
 
 	<div class="container">
-		<div id="publicPosts"></div>
-		<div id="privatePosts"></div>
+		<div id="profile"></div>
 	</div>
         
 
-
 	<script src="./userState.js"></script>
-	<script src="./diary.js"></script>
 	<script src="./js/jquery-3.3.1.min.js"></script>
         <script src="./js/bootstrap.min.js"></script>
-       	<script type="text/javascript">
+       
+	<script type="text/javascript">
    	function getDate(){ <!-- call all respective scripts to render different parts of the document-->
        
    	});
