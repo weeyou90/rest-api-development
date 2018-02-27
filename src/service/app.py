@@ -165,7 +165,8 @@ def index():
         return render_template('index.html', users=user, posts=posts, user_posts=user_posts )
 
     
-    return render_template('index.html', posts=posts )
+    # return render_template('index.html', posts=posts )
+    return make_json_response(ENDPOINT_LIST)
 
 @app.route("/meta/heartbeat")
 def meta_heartbeat():
@@ -194,30 +195,39 @@ def meta_short_answer_questions():
 # ====================================================
 #                 U S E R
 # ====================================================
-@app.route("/users/register", methods=('GET','POST'))
+@app.route("/users/register", methods=['POST'])
 def users_register():
-    form = SignupForm()
-    if form.validate_on_submit():
+    if not request.is_json:
+        return make_json_response("Invalid request", False) 
+    if request.method == 'POST':
+        post_data = request.get_json() or {}
+        username = post_data.get("username")
+        password = post_data.get("password")
+        fullname = post_data.get("fullname")
+        age = post_data.get("age")
+
         db=get_db()
-        submitted_name = form.name.data
+        submitted_name = username
         cursor = db.execute('SELECT * FROM users where name = (?)' , [submitted_name])
         a = cursor.fetchone()
-        # user_id = 1 if not a else 1 + int(a['id'])
         if a is None: 
-            # try:
-            pw = generate_password_hash(form.password.data)
-            db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [form.name.data, pw, form.fullname.data ,form.age.data, '123'])
+            db=get_db()
+            pw = generate_password_hash(password)
+            db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [username, pw, fullname ,age, '123'])
             #take note of token
             db.commit()
-            db.close()
-            session['user_name'] = form.name.data
-            flash('Thanks for registering. You are now logged in!')
-            return redirect(url_for('index'))
         else:
-            flash("A User with that name already exists. Choose another one!", 'error')
-            render_template('signup.html', form=form)
-    return render_template('signup.html', form=form)
+            data = {
+                'status': False,
+                'error': 'User already exists!'
+            }
+            return make_json_response(data)
 
+        # User created response
+        return make_json_response({'status': True}, status=201)
+
+    else:
+        print("Detect no posting data")
 
 @app.route("/users/authenticate", methods=('GET','POST'))
 def users_authenticate():
@@ -443,4 +453,4 @@ if __name__ == '__main__':
     os.chdir(dname)
     # Run the application
     ## set debug as True for auto reload
-    app.run(debug=True, port=8080, host="0.0.0.0")
+    app.run(debug=True, threaded=True, port=8080, host="0.0.0.0")

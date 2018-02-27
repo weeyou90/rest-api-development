@@ -21,6 +21,7 @@ function ajax_get(url, callback) {
     xmlhttp.send();
 }
 
+
 ajax_get(API_ENDPOINT + '/meta/heartbeat', function(data) {
 	if (data.status) {
 		document.getElementById("demo_heartbeat").innerHTML = "Heartbeat success";
@@ -60,4 +61,3 @@ ajax_get(API_ENDPOINT + '/meta/short_answer_questions', function(data) {
         document.getElementById("demo_short_answer_questions").innerHTML = "Short answer questions failed to load";
     }
 });
-

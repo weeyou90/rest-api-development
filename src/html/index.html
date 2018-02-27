@@ -1,0 +1,66 @@
+<html>
+   <head>
+      <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+      <link href="./stylesheet.css" rel="stylesheet">
+      <link rel="stylesheet" href="../css/bootstrap.min.css">
+   </head>
+   <style type="text/css">
+      .error{
+      color:red;
+      };
+   </style>
+   <body>
+      <body>
+         <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="index">My Secret Diary</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+<!--                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active">
+                     <a class="nav-link" href="{{url_for('index')}}">Home</a>
+                  </li>
+                  <li class="nav-item active">
+                     <a class="nav-link" href="{{url_for('new_entry')}}">New Entry</a>
+                  </li>
+               </ul> -->
+               <ul class="nav navbar-nav">
+                  <li class="nav-item active">
+                     <a class="nav-link" href="login.html">Login</a>
+                  </li>
+                  <li class="nav-item active">
+                     <a class="nav-link" href="signup.html">Register</a>
+                  </li>
+               </ul>
+            </div>
+         </nav>
+         <p>Requirements for the front end are as follows:</p>
+         <ul>
+            <li>Register a user</li>
+            <li>Login</li>
+            <li>Logout</li>
+            <li>Display all public diary entries</li>
+            <li>Display an authenticated user's diary entries</li>
+            <li>Create a new diary entry</li>
+            <li>Delete an existing diary entry</li>
+            <li>Toggle the permissions on an existing diary entry</li>
+         </ul>
+         <div id="register"></div>
+
+         <div id="demo_heartbeat">
+         </div>
+         <div id="demo_members">
+         </div>
+         <div id="demo_short_answer_questions">weeee
+         </div>
+         <footer class="footer">
+            <p>&copy; CS5331 Assignment 1 Group 10</p>
+         </footer>
+         </div>
+         <script src="./js/demo.js"></script>
+         <script src="./js/jquery-3.3.1.min.js"></script>
+         <script src="./js/bootstrap.min.js"></script>
+   </body>
+</html>
