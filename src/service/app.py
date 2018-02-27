@@ -113,6 +113,23 @@ def check_user_status():
 
 def is_logged_in(token):
 # TBD: check if token is issued
+    if token == 0:
+        return False;    
+
+    db = get_db()
+    cursor = db.execute('SELECT * from users where token = ?',[token])
+    a = cursor.rowcount
+
+    if cursor.rowcount == 1:
+        return True
+    if cusor.rowcount == 0:
+        return False
+
+    print("Something went wrong")
+    cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
+    db.commit()
+    db.close()
+    
     return True
 
 # =======================================================
