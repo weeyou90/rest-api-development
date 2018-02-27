@@ -22,7 +22,6 @@ class SignupForm(FlaskForm):
 
 
 class NewEntryForm(FlaskForm):
-    token = StringField('token')
     title = StringField('title', validators=[DataRequired(), Length(min=2, max=30)])
     public = RadioField('public', choices=[('isPublic','Public Post'),('isNotPublic','Private Post')])
     text = StringField('text', validators=[DataRequired()],widget=TextArea())

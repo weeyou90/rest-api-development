@@ -21,14 +21,18 @@ import sqlite3
 from datetime import datetime
 
 
-app = Flask(__name__)
+app = Flask(__name__
+            # static_url_path='',
+            # static_folder='/service/static',
+            # template_folder='/service/templates'
+            )
 app.config.from_object(__name__)
 
 app.config.update(dict(
-	DATABASE=('/src/service/flaskr.db'),
-	SECRET_KEY='development key',
-	USERNAME='admin',
-	PASSWORD='default'
+    DATABASE=('/src/service/flaskr.db'),
+    SECRET_KEY='development key',
+    USERNAME='admin',
+    PASSWORD='default'
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
@@ -36,7 +40,7 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 CORS(app)
 
 # Remember to update this list
-ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permissions'] 
+ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permissions','/diary/new_entry'] 
 
 #================================================================
 #        D B    H E L P E R  F U N C TI O N S
@@ -48,34 +52,34 @@ def dict_factory(cursor, row):
     return d
 
 def connect_db():
-	rv = sqlite3.connect(app.config['DATABASE'])
-	rv.row_factory = dict_factory
-	return rv
+    rv = sqlite3.connect(app.config['DATABASE'])
+    rv.row_factory = dict_factory
+    return rv
 
 def get_db():
-	if not hasattr(g, 'sqlite_db'):
-		g.sqlite_db = connect_db()
-	return g.sqlite_db
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
 
 def init_db():
-	with app.app_context():
-		db = get_db()
-		with app.open_resource('schema.sql', mode='r') as f:
-			try:
-				db.cursor().executescript(f.read())
-			except sqlite3.OperationalError, msg:
-				print msg
-		db.commit()
+    with app.app_context():
+        db = get_db()
+        with app.open_resource('schema.sql', mode='r') as f:
+            try:
+                db.cursor().executescript(f.read())
+            except sqlite3.OperationalError, msg:
+                print msg
+        db.commit()
 
 @app.cli.command('initdb')
 def initdb_command():
-	init_db()
-	print('Initialised the database')
+    init_db()
+    print('Initialised the database')
 
 @app.teardown_appcontext
 def close_db(error):
-	if hasattr(g, 'sqlite_db'):
-		g.sqlite_db.close()
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
 
 
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -139,26 +143,28 @@ def check_user_status():
 
 def is_logged_in(token):
 # TBD: check if token is issued
-	return True
+    return True
 
 # =======================================================
 #                        M E T A
 # =======================================================
 @app.route("/")
 def index():
+    db=get_db()
+    cursor2 = db.execute('Select * from diary_entries where public=1')
+    posts = cursor2.fetchall()
+    
     if session['token']:
         db=get_db()
         session_user_name = session['user_name']
         cursor = db.execute('SELECT * FROM users where name =(?)' ,[session_user_name])  
-        cursor2 = db.execute('Select * from diary_entries where public=1')
-        posts = cursor2.fetchall()
+        cursor2 = db.execute('Select * from diary_entries where author=(?)', [session_user_name])
+        user_posts = cursor2.fetchall()
         user = cursor.fetchone()
         make_json_response(session_user_name)
-        return render_template('index.html', users=user, posts=posts )
+        return render_template('index.html', users=user, posts=posts, user_posts=user_posts )
 
-    db=get_db()
-    cursor2 = db.execute('Select * from diary_entries where public=1')
-    posts = cursor2.fetchall()
+    
     return render_template('index.html', posts=posts )
 
 @app.route("/meta/heartbeat")
@@ -190,53 +196,53 @@ def meta_short_answer_questions():
 # ====================================================
 @app.route("/users/register", methods=('GET','POST'))
 def users_register():
-	form = SignupForm()
-	if form.validate_on_submit():
-		db=get_db()
-		submitted_name = form.name.data
-		cursor = db.execute('SELECT * FROM users where name = (?)' , [submitted_name])
-		a = cursor.fetchone()
-		# user_id = 1 if not a else 1 + int(a['id'])
-		if a is None: 
-			# try:
-			pw = generate_password_hash(form.password.data)
-			db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [form.name.data, pw, form.fullname.data ,form.age.data, '123'])
-			#take note of token
-			db.commit()
-			db.close()
-			session['user_name'] = form.name.data
-			flash('Thanks for registering. You are now logged in!')
-			return redirect(url_for('index'))
-		else:
-			flash("A User with that name already exists. Choose another one!", 'error')
-			render_template('signup.html', form=form)
-	return render_template('signup.html', form=form)
+    form = SignupForm()
+    if form.validate_on_submit():
+        db=get_db()
+        submitted_name = form.name.data
+        cursor = db.execute('SELECT * FROM users where name = (?)' , [submitted_name])
+        a = cursor.fetchone()
+        # user_id = 1 if not a else 1 + int(a['id'])
+        if a is None: 
+            # try:
+            pw = generate_password_hash(form.password.data)
+            db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [form.name.data, pw, form.fullname.data ,form.age.data, '123'])
+            #take note of token
+            db.commit()
+            db.close()
+            session['user_name'] = form.name.data
+            flash('Thanks for registering. You are now logged in!')
+            return redirect(url_for('index'))
+        else:
+            flash("A User with that name already exists. Choose another one!", 'error')
+            render_template('signup.html', form=form)
+    return render_template('signup.html', form=form)
 
 
 @app.route("/users/authenticate", methods=('GET','POST'))
 def users_authenticate():
-	if session['token']:
-		return redirect(url_for('index'))
-	form = LoginForm()
-	if form.validate_on_submit():
-		db=get_db()
-		form_name = form.name.data
-		cursor = db.execute('SELECT * FROM users where name = ?', [form_name])  
-		user = cursor.fetchone()
-		#check_correct_password = check_password_hash(user['password', form.password.data) #double check pls! 
-		if user is not None and check_password_hash(user['password'], form.password.data) is True:
-			session['token'] = uuid4()
-			session['user_name'] = user['name']
-			flash('Thanks for logging in')
-			return redirect(url_for('index'))
-		else:
-			flash('Sorry! no user exists with this username and password')
-			return render_template('login.html', form=form)
-	return render_template('login.html', form=form)
+    if session['token']:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        db=get_db()
+        form_name = form.name.data
+        cursor = db.execute('SELECT * FROM users where name = ?', [form_name])  
+        user = cursor.fetchone()
+        #check_correct_password = check_password_hash(user['password', form.password.data) #double check pls! 
+        if user is not None and check_password_hash(user['password'], form.password.data) is True:
+            session['token'] = uuid4()
+            session['user_name'] = user['name']
+            flash('Thanks for logging in')
+            return redirect(url_for('index'))
+        else:
+            flash('Sorry! no user exists with this username and password')
+            return render_template('login.html', form=form)
+    return render_template('login.html', form=form)
 
 @app.route("/users/expire")
 def users_expire():
-	#expire a token
+    #expire a token
     session.clear()
     return redirect(url_for('index'))
 
@@ -249,8 +255,8 @@ def users_expire():
     #     if token.expired_at > datetime.datetime.now():
     #         return True
 
-	# 	return make_json_response(None)	
-	# return make_json_response(None,False)
+    #   return make_json_response(None) 
+    # return make_json_response(None,False)
 
 @app.route("/users")
 def users():
@@ -259,10 +265,20 @@ def users():
         cursor = db.execute('SELECT * FROM users where name = (?)', [session['user_name']])  
         users = cursor.fetchone()
         # users = User.query.filter_by(name=session['user_name']).first()
+        # if request.method =="POST":
+        #   return make_json_response(users, True, 200)
+
         return render_template('info.html', users=users) 
     else:
+        # if request.json and 'token' in request.json:
+        #   error = [{"error":"Invalid authentication token"}]
+        #   return make_json_response(error, False) 
+        
         return render_template('unauthorised.html')
-
+        
+# @app.errorhandler(404)
+# def not_found(error):
+#   return make_json_response(jsonify({'eorror':'Not Found'}), 404)
 
 # =====================================================
 #                    D I A R Y
@@ -270,6 +286,19 @@ def users():
 
 @app.route("/diary", methods = ['GET'])
 def diary(): 
+    ## show authenticated user's diary
+    # if session['token']:
+    #     ## double check user's session
+    #     # db=get_db()
+    #     #cursor = db.execute('SELECT * FROM users where name = (?)', [session['user_name']])  
+    #     # users = cursor.fetchone()
+    #     # if users is not None:
+    #     db=get_db()
+    #     cursor = db.execute('SELECT * FROM diary_entries where author = (?)', [session['user_name']])  
+    #     user_posts = cursor.fetchall()
+    #     print(user_posts.text)
+    #     return render_template("index.html",  user_posts=user_posts)
+
     diary_entries = [{
       "id": 1,
       "title": "My First Project",
@@ -288,11 +317,11 @@ def diary():
     }]
 
     #code to view diary
-    db=get_db()	
+    db=get_db() 
     db.row_factory = dict_factory
     
 
-    cursor = db.execute('SELECT * FROM diary_entries')  
+    cursor = db.execute('SELECT * FROM diary_entries where public=1')  
     a = cursor.fetchall()
     print a 
     return make_json_response(a)
@@ -301,120 +330,110 @@ def diary():
 @app.route("/diary/create", methods=['POST'])
 def diary_create():
 #token, title, public, text
-	try:
-	#check for correct inputs
-		data = request.get_json()
-		token = data['token']
-		title = data['title']
-		public = data['public']
-		text = data['text']
-	except:
-		#print request.data
-		return make_json_response("Invalid inputs",False)
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        token = data['token']
+        title = data['title']
+        public = data['public']
+        text = data['text']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
 
-	#authenticate
-	if not (is_logged_in(data['token'])):
-		return make_json_response("Invalid authentication token",False)
-	
-	#====code to insert diary====
-	db=get_db()
-	#get max id (TBD: get max id of entry by logged in user)	
-	cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
-	a = cursor.fetchone()
-	#set id as maxid+1
-	diary_id = 1 if not a else 1 + int(a['id'])
+    #authenticate
+    if not (is_logged_in(data['token'])):
+        return make_json_response("Invalid authentication token",False)
+    
+    #====code to insert diary====
+    db=get_db()
+    #get max id (TBD: get max id of entry by logged in user)    
+    cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
+    a = cursor.fetchone()
+    #set id as maxid+1
+    diary_id = 1 if not a else 1 + int(a['id'])
 
-	#insert diary entry
+    #insert diary entry
 
-	# cur.execute('insert into members')
-	db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, datetime.now() ,"author", public, text])
-	
+    # cur.execute('insert into members')
+    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, session['user_name'], datetime.now() , public, text])
 
-	db.commit()
-	db.close()
+    db.commit()
+    db.close()
 
 
-	return make_json_response(diary_id,True,201)
+    return make_json_response(diary_id,True,201)
+
+@app.route("/diary/newEntry", methods=('GET','POST'))
+def new_entry():
+    form = NewEntryForm()
+    if session['token']:
+        if form.validate_on_submit():
+            #====code to insert diary====
+            db=get_db()
+            #insert diary entry
+            db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (null,?,?,?,?,?)', [form.title.data,session['user_name'], datetime.now() , form.public.data, form.text.data])
+            db.commit()
+            db.close()
+            flash("Created new diaries")
+            return redirect(url_for('index'))
+        else:
+            # flash("Sorry! Can't post now")
+            # return make_json_response("Invalid inputs",False)
+            return render_template('newEntry.html', form=form)
+
+    return render_template('newEntry.html', form=form)
+
 
 
 @app.route("/diary/delete", methods=['POST'])
 def diary_delete():
-	#token, id
-	try:
-	#check for correct inputs
-		data = request.get_json()
-		token = data['token']
-		diary_id = data['id']
-	except:
-		print request.data
-		return make_json_response("Invalid inputs",False)
+    #token, id
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        token = data['token']
+        diary_id = data['id']
+    except:
+        print request.data
+        return make_json_response("Invalid inputs",False)
 
-	if not (is_logged_in(data['token'])):
-		return make_json_response("Invalid authentication token",False)
+    if not (is_logged_in(data['token'])):
+        return make_json_response("Invalid authentication token",False)
 
-	#code to delete diary (TBD: delete entry owned by user)
-	db=get_db()
-	cursor = db.execute('delete from diary_entries where id = ?',[diary_id])
-	db.commit()
-	
-	if ( cursor.rowcount == 1): #if delete successful
-		return make_json_response(None, True)
-	return make_json_response("Cannot find diary entry", False)
+    #code to delete diary (TBD: delete entry owned by user)
+    db=get_db()
+    cursor = db.execute('delete from diary_entries where id = ?',[diary_id])
+    db.commit()
+    
+    if ( cursor.rowcount == 1): #if delete successful
+        return make_json_response(None, True)
+    return make_json_response("Cannot find diary entry", False)
 
 @app.route("/diary/permissions", methods=['POST'])
 def diary_permissions():
-	#token, id, public
-	try:
-		data = request.get_json()
-		token = data['token']
-		diary_id = data['id']
-		public = data['public']
-	except:
-		#print request.data
-		return make_json_response("Invalid inputs",False)
+    #token, id, public
+    try:
+        data = request.get_json()
+        token = data['token']
+        diary_id = data['id']
+        public = data['public']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
 
-	if not (is_logged_in(data['token'])):
-		return make_json_response("Invalid authentication token",False)
+    if not (is_logged_in(data['token'])):
+        return make_json_response("Invalid authentication token",False)
 
-	#code to update diary owned by user
-	db=get_db()
-	cursor = db.execute('update diary_entries set public = ? where id = ?',[public, diary_id])
-	db.commit()
-	
-	if ( cursor.rowcount == 1): #if update successful
-		return make_json_response(None, True)
-	return make_json_response("Cannot find diary entry", False)
+    #code to update diary owned by user
+    db=get_db()
+    cursor = db.execute('update diary_entries set public = ? where id = ?',[public, diary_id])
+    db.commit()
+    
+    if ( cursor.rowcount == 1): #if update successful
+        return make_json_response(None, True)
+    return make_json_response("Cannot find diary entry", False)
 
-
-@app.route("/diary/newEntry")
-def new_entry():
-     publishDate = "0800"
-     form = NewEntryForm()
-     if session['user_name']:   
-	if form.validate_on_submit():
-                try:
-                   print("call rest services")
-		except:
-                    print('Insert error')
-                    return redirect(url_for('index'))
-	else:
-            render_template('newEntry.html', form=form)	
-     else:
-        return render_template('newEntry.html', form=form)
-
-
-@app.route("/diary/myEntries")
-def my_entries():
-    if session['user_name']:
-	db=get_db()
-	try:
-	    cursor = db.execute('select * from diary_enties where author=user_name')
-	    myEntries = cursor.fetchone()
-            return render_template('myEntries.html', myEntries = myEntries)
-	except:
-            return render_template('myEntries.html')
-    else:
-        return render_template('myEntries.html')
 
 # working
 if __name__ == '__main__':

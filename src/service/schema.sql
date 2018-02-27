@@ -8,7 +8,7 @@ create table if not exists users (
 );
 
 create table if not exists diary_entries (
-  id int primary key, 
+  id integer primary key not null, 
   title varchar (255) not null,
   author varchar (255) not null,
   publish_date datetime not null, 
