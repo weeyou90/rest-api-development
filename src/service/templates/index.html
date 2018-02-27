@@ -53,10 +53,23 @@
 		  <div class="card-body">
 		    <h5 class="card-title">{{user_post.title}}</h5>
 		    <h6 class="card-subtitle mb-2 text-muted">By:{{user_post.author}}<br> On:{{user_post.publish_date}}
-
-			<button type="button" class="btn btn-default btn-sm" style="float:right; position:relative; margin-left:5px;"><span class="fa fa-trash"></span></button>
-			{%if user_post.public==0 %}<button type="button" class="btn btn-default btn-sm" style="float:right; position:relative"><span class="fa fa-eye" ></span></button>
-			{% else %}<button type="button" class="btn btn-default btn-sm" style="float:right;position:relative"><span class="fa fa-eye-slash"></span></button>	
+			<form method="POST">
+				<button type="button" class="btn btn-default btn-sm" style="float:right; position:relative; margin-left:5px;">
+					<span class="fa fa-trash"></span>
+				</button>
+			</form>
+			{%if user_post.public==0 %}
+			<form method="POST">
+				<button type="button" class="btn btn-default btn-sm" style="float:right; position:relative">
+					<span class="fa fa-eye" ></span>
+				</button>
+			</form>
+			{% else %}
+			<form method="POST">
+				<button type="button" class="btn btn-default btn-sm" style="float:right;position:relative">
+					<span class="fa fa-eye-slash"></span>
+				</button>
+			</form>
 			{%endif%}
 			
 			</h6>
