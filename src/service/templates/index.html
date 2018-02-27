@@ -1,12 +1,4 @@
 {% extends "base.html" %}
-    <style type="text/css">
-        .error{
-            color:red;
-        };
-
-    </style>
-	
-	
         {% block body %}
 	
 	<div class="container jumbo-container">
@@ -24,7 +16,7 @@
 <div class="card" style="width: 100%;">
 		  <div class="card-body">
 		    <h5 class="card-title">{{post.title}}</h5>
-		    <h6 class="card-subtitle mb-2 text-muted">Published by:{{post.author}}, On:{{post.publish_date}}</h6>
+		    <h6 class="card-subtitle mb-2 text-muted">By:{{post.author}}<br>On:{{post.publish_date}}</h6>
 		    <p class="card-text">{{post.text}}</p>
 		    <a href="#" class="card-link" data-toggle="modal" data-target={{"#" + post.id|string()}}>Read more</a>
 		  </div>
@@ -60,9 +52,19 @@
 <div class="card" style="width: 100%;">
 		  <div class="card-body">
 		    <h5 class="card-title">{{user_post.title}}</h5>
-		    <h6 class="card-subtitle mb-2 text-muted">Published by:{{user_post.author}}, On:{{user_post.publish_date}}</h6>
+		    <h6 class="card-subtitle mb-2 text-muted">By:{{user_post.author}}<br> On:{{user_post.publish_date}}
+
+			<button type="button" class="btn btn-default btn-sm" style="float:right; position:relative; margin-left:5px;"><span class="fa fa-trash"></span></button>
+			{%if user_post.public==0 %}<button type="button" class="btn btn-default btn-sm" style="float:right; position:relative"><span class="fa fa-eye" ></span></button>
+			{% else %}<button type="button" class="btn btn-default btn-sm" style="float:right;position:relative"><span class="fa fa-eye-slash"></span></button>	
+			{%endif%}
+			
+			</h6>
+		
 		    <p class="card-text">{{user_post.text}}</p>
-		    <a href="#" class="card-link" data-toggle="modal" data-target={{"#" + user_post.id|string()}}>Read more</a>
+		    <a href="#" class="card-link flush-left" data-toggle="modal" data-target={{"#" + user_post.id|string()}}>Read more</a>
+				
+		    	
 		  </div>
 		</div>
 		

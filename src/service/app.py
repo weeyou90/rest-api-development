@@ -151,7 +151,7 @@ def is_logged_in(token):
 @app.route("/")
 def index():
     db=get_db()
-    cursor2 = db.execute('Select * from diary_entries where public=1')
+    cursor2 = db.execute('Select * from diary_entries where public=0')
     posts = cursor2.fetchall()
     
     if session['token']:
@@ -211,7 +211,7 @@ def users_register():
             db.commit()
             db.close()
             session['user_name'] = form.name.data
-            flash('Thanks for registering. You are now logged in!')
+            #flash('Thanks for registering. You are now logged in!')
             return redirect(url_for('index'))
         else:
             flash("A User with that name already exists. Choose another one!", 'error')
@@ -233,7 +233,7 @@ def users_authenticate():
         if user is not None and check_password_hash(user['password'], form.password.data) is True:
             session['token'] = uuid4()
             session['user_name'] = user['name']
-            flash('Thanks for logging in')
+            #flash('Thanks for logging in')
             return redirect(url_for('index'))
         else:
             flash('Sorry! no user exists with this username and password')
