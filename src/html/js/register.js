@@ -39,10 +39,14 @@ $(document).ready(function(){
 
                     if (result.status == true)
                     {
+                        // redirect to the login page
+
                       alert("User successfully registered!");
+                      location.href("./login.html")
                     }
                     else if (result.status == false)
                     {
+                         // have some issues, need to fix
                       alert("User already exists!");
 
                     }
