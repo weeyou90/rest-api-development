@@ -270,11 +270,12 @@ def users():
 
         return render_template('info.html', users=users) 
     else:
+        return make_json_response("Invalid authentication token.",False)
         # if request.json and 'token' in request.json:
         #   error = [{"error":"Invalid authentication token"}]
         #   return make_json_response(error, False) 
         
-        return render_template('unauthorised.html')
+        # return render_template('unauthorised.html')
         
 # @app.errorhandler(404)
 # def not_found(error):
