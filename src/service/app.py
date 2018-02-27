@@ -1,18 +1,9 @@
 #/usr/bin/python
 
-# from flask_cors import CORS
-# from app import app, db 
 from werkzeug import generate_password_hash, check_password_hash
-from flask import Flask,request,session,abort,jsonify,redirect,render_template, escape, make_response, url_for, flash
-# from flask_sqlalchemy import SQLAlchemy
-import json
-import os
+from flask import Flask,request,session,abort,jsonify,redirect,render_template, escape, make_response, url_for, flash,g
 from uuid import uuid4
-import datetime
 from forms import SignupForm, LoginForm, NewEntryForm
-
-
-from flask import Flask, request, session, g
 from flask_cors import CORS
 import sys
 import json
@@ -41,6 +32,9 @@ CORS(app)
 
 # Remember to update this list
 ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permissions','/diary/new_entry'] 
+
+
+app.config['SECRET_KEY'] = os.urandom(24)
 
 #================================================================
 #        D B    H E L P E R  F U N C TI O N S
@@ -81,31 +75,6 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
-
-app.config['SECRET_KEY'] = os.urandom(24)
-
-
-class User():
-  
-
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
-
-    # def check_password(self, password):
-    #     return check_password_hash(self.password, password)
-
-    def __repr__(self):
-        return '<User %r>' % self.name
-
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
 
 # =======================================================
 #                     C O M M O N
@@ -194,8 +163,49 @@ def meta_short_answer_questions():
 # ====================================================
 #                 U S E R
 # ====================================================
+@app.route("/users/clear")
+def users_clear():
+#test function to clear database of all users
+    db=get_db()
+    cursor = db.execute('DELETE from users')
+    db.commit()
+    db.close()
+
+    return make_json_response(cursor.rowcount) 
+
 @app.route("/users/register", methods=('GET','POST'))
 def users_register():
+#username, password, fullname, age
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        fullname = data['fullname']
+        age = data['age']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
+    
+    db=get_db()
+
+    #check if username exists
+    cursor = db.execute('SELECT * FROM users where name = (?)' , [username])
+    a = cursor.fetchone()
+    if a is not None:
+        return make_json_response("User already exists!", False)
+    #hash and salt pw
+    hashedpw = generate_password_hash(password)
+    cursor = db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [username, password, fullname, age, '0'])
+    db.commit()
+    db.close()
+
+   
+    if ( cursor.rowcount == 1): #if insert successful
+        return make_json_response(None, True,201)
+    return make_json_response("Unknown Error, Registration Failed", False)
+
+'''
     form = SignupForm()
     if form.validate_on_submit():
         db=get_db()
@@ -214,10 +224,11 @@ def users_register():
             #flash('Thanks for registering. You are now logged in!')
             return redirect(url_for('index'))
         else:
+
             flash("A User with that name already exists. Choose another one!", 'error')
             render_template('signup.html', form=form)
     return render_template('signup.html', form=form)
-
+'''
 
 @app.route("/users/authenticate", methods=('GET','POST'))
 def users_authenticate():
@@ -299,28 +310,10 @@ def diary():
     #     print(user_posts.text)
     #     return render_template("index.html",  user_posts=user_posts)
 
-    diary_entries = [{
-      "id": 1,
-      "title": "My First Project",
-      "author": "ashrugged",
-      "publish_date": "2013-02-27T13:37:00+00:00",
-      "public": 'true',
-      "text": "If you don't know, the thing to do is not to get scared, but to learn."
-    },
-    {
-      "id": 2,
-      "title": "A New Lesson!",
-      "author": "audrey123talks",
-      "publish_date": "2013-02-29T13:37:00+00:00",
-      "public": 'true',
-      "text": "Check out my latest video!"
-    }]
-
-    #code to view diary
+   #code to view diary
     db=get_db() 
     db.row_factory = dict_factory
     
-
     cursor = db.execute('SELECT * FROM diary_entries where public=1')  
     a = cursor.fetchall()
     print a 
