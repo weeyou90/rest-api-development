@@ -90,7 +90,8 @@ def make_json_response(data, status=True, code=200):
             to_serialize['result'] = data
     else:
         to_serialize['status'] = False
-        to_serialize['error'] = data
+        if data is not None:
+            to_serialize['error'] = data
     response = app.response_class(
         response=json.dumps(to_serialize),
         status=code,
@@ -173,7 +174,7 @@ def users_clear():
 
     return make_json_response(cursor.rowcount) 
 
-@app.route("/users/register", methods=('GET','POST'))
+@app.route("/users/register", methods=['POST'])
 def users_register():
 #username, password, fullname, age
     try:
@@ -196,60 +197,39 @@ def users_register():
         return make_json_response("User already exists!", False)
     #hash and salt pw
     hashedpw = generate_password_hash(password)
-    cursor = db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [username, password, fullname, age, '0'])
+    cursor = db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [username, hashedpw, fullname, age, '0'])
     db.commit()
     db.close()
-
    
     if ( cursor.rowcount == 1): #if insert successful
         return make_json_response(None, True,201)
     return make_json_response("Unknown Error, Registration Failed", False)
 
-'''
-    form = SignupForm()
-    if form.validate_on_submit():
-        db=get_db()
-        submitted_name = form.name.data
-        cursor = db.execute('SELECT * FROM users where name = (?)' , [submitted_name])
-        a = cursor.fetchone()
-        # user_id = 1 if not a else 1 + int(a['id'])
-        if a is None: 
-            # try:
-            pw = generate_password_hash(form.password.data)
-            db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [form.name.data, pw, form.fullname.data ,form.age.data, '123'])
-            #take note of token
-            db.commit()
-            db.close()
-            session['user_name'] = form.name.data
-            #flash('Thanks for registering. You are now logged in!')
-            return redirect(url_for('index'))
-        else:
-
-            flash("A User with that name already exists. Choose another one!", 'error')
-            render_template('signup.html', form=form)
-    return render_template('signup.html', form=form)
-'''
-
-@app.route("/users/authenticate", methods=('GET','POST'))
+@app.route("/users/authenticate", methods=['POST'])
 def users_authenticate():
-    if session['token']:
-        return redirect(url_for('index'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        db=get_db()
-        form_name = form.name.data
-        cursor = db.execute('SELECT * FROM users where name = ?', [form_name])  
-        user = cursor.fetchone()
-        #check_correct_password = check_password_hash(user['password', form.password.data) #double check pls! 
-        if user is not None and check_password_hash(user['password'], form.password.data) is True:
-            session['token'] = uuid4()
-            session['user_name'] = user['name']
-            #flash('Thanks for logging in')
-            return redirect(url_for('index'))
-        else:
-            flash('Sorry! no user exists with this username and password')
-            return render_template('login.html', form=form)
-    return render_template('login.html', form=form)
+#username, password
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
+
+    db=get_db()
+    cursor = db.execute('SELECT * FROM users where name = ?', [username])  
+    user = cursor.fetchone()
+
+    #check if user is not none and hashed+salted input = stored password
+    if user is not None and check_password_hash(user['password'], password) is True:
+        token = str(uuid4())
+        print (token)
+        cursor = db.execute('UPDATE users SET token = ? WHERE name = ?', [token, username])
+        if ( cursor.rowcount == 1): #if insert successful
+            return make_json_response(token,200)
+    #login failed
+    return make_json_response(None,False)
 
 @app.route("/users/expire")
 def users_expire():
