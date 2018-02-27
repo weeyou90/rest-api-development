@@ -223,31 +223,40 @@ def users_authenticate():
 
     #check if user is not none and hashed+salted input = stored password
     if user is not None and check_password_hash(user['password'], password) is True:
+        #issue a token
         token = str(uuid4())
-        print (token)
         cursor = db.execute('UPDATE users SET token = ? WHERE name = ?', [token, username])
-        if ( cursor.rowcount == 1): #if insert successful
+        db.commit()
+        db.close()
+        #if token issued successfully
+        if ( cursor.rowcount == 1):
             return make_json_response(token,200)
     #login failed
     return make_json_response(None,False)
 
-@app.route("/users/expire")
+@app.route("/users/expire", methods=['POST'])
 def users_expire():
+#token
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        token = data['token']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
+ 
+
     #expire a token
-    session.clear()
-    return redirect(url_for('index'))
-
-    ## add time out feature
-    # token = User.query.filter(User.hashed == hashed)
-
-    # if token.count():
-    #     token = token.first()
-
-    #     if token.expired_at > datetime.datetime.now():
-    #         return True
-
-    #   return make_json_response(None) 
-    # return make_json_response(None,False)
+    db=get_db()
+    cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
+    db.commit()
+    db.close()
+    affected = cursor.rowcount
+    if ( affected == 1): #if logged out
+        return make_json_response(None, True)
+    if ( affected == 0): #cannot find token
+        return make_json_response(None, False)
+    return ("Something went wrong", False)
 
 @app.route("/users")
 def users():
