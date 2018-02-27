@@ -260,15 +260,17 @@ def users_expire():
 
 @app.route("/users")
 def users():
-    if session['token']:
+    if is_logged_in(session['token']):
         db=get_db()
-        cursor = db.execute('SELECT * FROM users where name = (?)', [session['user_name']])  
-        users = cursor.fetchone()
+        session['user_name'] = 'BloodDiamond'  # to be removed once the token functionality works
+        cursor = db.execute('SELECT name, fullname, age FROM users where name = (?)', [session['user_name']])  
+        user_information = cursor.fetchone()    
         # users = User.query.filter_by(name=session['user_name']).first()
         # if request.method =="POST":
         #   return make_json_response(users, True, 200)
 
-        return render_template('info.html', users=users) 
+        # return render_template('info.html', users=users) 
+        return make_json_response(user_information, True)
     else:
         # if request.json and 'token' in request.json:
         #   error = [{"error":"Invalid authentication token"}]
