@@ -112,35 +112,36 @@ def check_user_status():
     
 
 def is_logged_in(token):
-# TBD: check if token is issued
     if token == 0:
         return False;    
 
     db = get_db()
     cursor = db.execute('SELECT * from users where token = ?',[token])
-    a = cursor.rowcount
+    a = cursor.fetchall()
 
-    if cursor.rowcount == 1:
+    print (len(a))
+    if len(a) == 1:
         return True
-    if cusor.rowcount == 0:
+    if len(a) == 0:
         return False
 
-    print("Something went wrong")
     cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
     db.commit()
     db.close()
     
-    return True
+    return False
 
 # =======================================================
 #                        M E T A
 # =======================================================
 @app.route("/")
 def index():
-    db=get_db()
+#Return list of endpoints
+   return make_json_response(ENDPOINT_LIST)
+'''
+   db=get_db()
     cursor2 = db.execute('Select * from diary_entries where public=0')
     posts = cursor2.fetchall()
-    
     if session['token']:
         db=get_db()
         session_user_name = session['user_name']
@@ -149,10 +150,9 @@ def index():
         user_posts = cursor2.fetchall()
         user = cursor.fetchone()
         make_json_response(session_user_name)
-        return render_template('index.html', users=user, posts=posts, user_posts=user_posts )
-
-    
+        return render_template('index.html', users=user, posts=posts, user_posts=user_posts )    
     return render_template('index.html', posts=posts )
+'''
 
 @app.route("/meta/heartbeat")
 def meta_heartbeat():
@@ -173,24 +173,21 @@ def meta_short_answer_questions():
         short_answer_questions = f.read().strip().split("\n")
     return make_json_response(short_answer_questions)
 
-
-    
-# @verify_required_params(['email', 'password', 'name'])
-# @validate_email_format
-
-# ====================================================
-#                 U S E R
-# ====================================================
-@app.route("/users/clear")
-def users_clear():
+@app.route("/clear")
+def clear():
 #test function to clear database of all users
     db=get_db()
     cursor = db.execute('DELETE from users')
+    cursor = db.execute('DELETE from diary_entries')
     db.commit()
     db.close()
 
     return make_json_response(cursor.rowcount) 
 
+
+# ====================================================
+#                 U S E R
+# ====================================================
 @app.route("/users/register", methods=['POST'])
 def users_register():
 #username, password, fullname, age
@@ -240,8 +237,10 @@ def users_authenticate():
 
     #check if user is not none and hashed+salted input = stored password
     if user is not None and check_password_hash(user['password'], password) is True:
+        #TOKEN FOR TEST
+        token = "6bf00d02-dffc-4849-a635-a21b08500d61"
         #issue a token
-        token = str(uuid4())
+        #token = str(uuid4())
         cursor = db.execute('UPDATE users SET token = ? WHERE name = ?', [token, username])
         db.commit()
         db.close()
@@ -262,38 +261,37 @@ def users_expire():
         #print request.data
         return make_json_response("Invalid inputs",False)
  
-
     #expire a token
     db=get_db()
     cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
+    
+    a = cursor.rowcount
     db.commit()
     db.close()
-    affected = cursor.rowcount
-    if ( affected == 1): #if logged out
+    if ( a==1 ): #if logged out
         return make_json_response(None, True)
-    if ( affected == 0): #cannot find token
+    if (a==0): #cannot find token
         return make_json_response(None, False)
     return ("Something went wrong", False)
 
-@app.route("/users")
+@app.route("/users", methods=['POST'])
 def users():
-    if is_logged_in(session['token']):
-        db=get_db()
-        session['user_name'] = 'BloodDiamond'  # to be removed once the token functionality works
-        cursor = db.execute('SELECT name, fullname, age FROM users where name = (?)', [session['user_name']])  
-        user_information = cursor.fetchone()    
-        # users = User.query.filter_by(name=session['user_name']).first()
-        # if request.method =="POST":
-        #   return make_json_response(users, True, 200)
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        token = data['token']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
 
-        # return render_template('info.html', users=users) 
+    #check is logged in 
+    if is_logged_in(token):
+        db=get_db()
+        cursor = db.execute('SELECT name, fullname, age FROM users where token = (?)', token)  
+        user_information = cursor.fetchone()    
         return make_json_response(user_information, True)
     else:
-        # if request.json and 'token' in request.json:
-        #   error = [{"error":"Invalid authentication token"}]
-        #   return make_json_response(error, False) 
         return make_json_response("Invalid authentication token.",False)
-        # return render_template('unauthorised.html')
         
 # @app.errorhandler(404)
 # def not_found(error):
@@ -303,29 +301,37 @@ def users():
 #                    D I A R Y
 # =====================================================
 
-@app.route("/diary", methods = ['GET'])
+@app.route("/diary", methods = ['GET','POST'])
 def diary(): 
-    ## show authenticated user's diary
-    # if session['token']:
-    #     ## double check user's session
-    #     # db=get_db()
-    #     #cursor = db.execute('SELECT * FROM users where name = (?)', [session['user_name']])  
-    #     # users = cursor.fetchone()
-    #     # if users is not None:
-    #     db=get_db()
-    #     cursor = db.execute('SELECT * FROM diary_entries where author = (?)', [session['user_name']])  
-    #     user_posts = cursor.fetchall()
-    #     print(user_posts.text)
-    #     return render_template("index.html",  user_posts=user_posts)
 
-   #code to view diary
+    #code to view diary
     db=get_db() 
-    db.row_factory = dict_factory
     
-    cursor = db.execute('SELECT * FROM diary_entries where public=1')  
-    a = cursor.fetchall()
-    print a 
-    return make_json_response(a)
+    if request.method == 'GET':
+        cursor = db.execute('SELECT * FROM diary_entries where public = 1')  
+        a = cursor.fetchall()
+        return make_json_response(a)
+
+    if request.method == 'POST':
+        try:
+        #check for correct inputs
+            data = request.get_json()
+            token = data['token']
+        except:
+            #print request.data
+            return make_json_response("Invalid inputs",False)
+    
+        if is_logged_in(token):
+            cursor = db.execute('SELECT * FROM users where token = (?)', [token])  
+            a = cursor.fetchone()
+            cursor = db.execute('SELECT * FROM diary_entries where author = ?', [a['name']])
+            a = cursor.fetchall()
+            return make_json_response(a, True)
+        else:
+            return make_json_response("Invalid authentication token.",False)
+ 
+       
+    return make_json_response("Something went wrong", False)
 
 
 @app.route("/diary/create", methods=['POST'])
@@ -343,49 +349,24 @@ def diary_create():
         return make_json_response("Invalid inputs",False)
 
     #authenticate
-    if not (is_logged_in(data['token'])):
+    if not (is_logged_in(token)):
         return make_json_response("Invalid authentication token",False)
     
     #====code to insert diary====
     db=get_db()
-    #get max id (TBD: get max id of entry by logged in user)    
     cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
     a = cursor.fetchone()
     #set id as maxid+1
     diary_id = 1 if not a else 1 + int(a['id'])
 
     #insert diary entry
-
-    # cur.execute('insert into members')
-    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, session['user_name'], datetime.now() , public, text])
-
+    cursor = db.execute('select * from users where token = (?)', [token])  
+    a = cursor.fetchone()
+    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, a["name"], datetime.now() , public, text])
     db.commit()
     db.close()
 
-
     return make_json_response(diary_id,True,201)
-
-@app.route("/diary/newEntry", methods=('GET','POST'))
-def new_entry():
-    form = NewEntryForm()
-    if session['token']:
-        if form.validate_on_submit():
-            #====code to insert diary====
-            db=get_db()
-            #insert diary entry
-            db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (null,?,?,?,?,?)', [form.title.data,session['user_name'], datetime.now() , form.public.data, form.text.data])
-            db.commit()
-            db.close()
-            flash("Created new diaries")
-            return redirect(url_for('index'))
-        else:
-            # flash("Sorry! Can't post now")
-            # return make_json_response("Invalid inputs",False)
-            return render_template('newEntry.html', form=form)
-
-    return render_template('newEntry.html', form=form)
-
-
 
 @app.route("/diary/delete", methods=['POST'])
 def diary_delete():
@@ -399,12 +380,16 @@ def diary_delete():
         print request.data
         return make_json_response("Invalid inputs",False)
 
-    if not (is_logged_in(data['token'])):
+    if not (is_logged_in(token)):
         return make_json_response("Invalid authentication token",False)
 
-    #code to delete diary (TBD: delete entry owned by user)
+    
+    #code to delete diary
     db=get_db()
-    cursor = db.execute('delete from diary_entries where id = ?',[diary_id])
+
+    cursor = db.execute('select * where token = (?)', [token])  
+    a = cursor.fetchone() 
+    cursor = db.execute('delete from diary_entries where id = ? and author = ?',[diary_id, a['name']])
     db.commit()
     
     if ( cursor.rowcount == 1): #if delete successful
@@ -423,12 +408,16 @@ def diary_permissions():
         #print request.data
         return make_json_response("Invalid inputs",False)
 
-    if not (is_logged_in(data['token'])):
+    if not (is_logged_in(token)):
         return make_json_response("Invalid authentication token",False)
 
     #code to update diary owned by user
     db=get_db()
-    cursor = db.execute('update diary_entries set public = ? where id = ?',[public, diary_id])
+   
+    cursor = db.execute('select * from users where token = (?)', [token])  
+    a = cursor.fetchone() 
+  
+    cursor = db.execute('update diary_entries set public = ? where id = ? and author = ?',[public, diary_id, a['name']])
     db.commit()
     
     if ( cursor.rowcount == 1): #if update successful
@@ -444,4 +433,4 @@ if __name__ == '__main__':
     os.chdir(dname)
     # Run the application
     ## set debug as True for auto reload
-    app.run(debug=True, port=8080, host="0.0.0.0")
+    app.run(debug=False, port=8080, host="0.0.0.0")

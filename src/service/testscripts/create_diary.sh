@@ -1,7 +1,3 @@
-echo "Getting the list of public diary entries:"
-
-curl -i localhost:8080/diary
-
 echo "Unable to retireve all entries belonging to an authenticated user due to invalid post inputs:"
 
 curl localhost:8080/diary/create -X POST -H "Content-Type: application/json" -d '{"token":"2"}'
