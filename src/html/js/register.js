@@ -39,11 +39,12 @@ $(document).ready(function(){
 
                     if (result.status == true)
                     {
-                      alert("User successfully registered!");
+                      alert("User successfully registered! Please login with your credentials now!");
+		      window.location.replace("/")
                     }
                     else if (result.status == false)
                     {
-                      alert("User already exists!");
+                      alert(result.error);
 
                     }
 

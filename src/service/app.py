@@ -20,7 +20,7 @@ app = Flask(__name__
 app.config.from_object(__name__)
 
 app.config.update(dict(
-    DATABASE=('/src/service/flaskr.db'),
+    DATABASE=('/service/flaskr.db'),
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
@@ -206,7 +206,7 @@ def users_register():
 
 @app.route("/users/authenticate", methods=['POST'])
 def users_authenticate():
-username, password
+#username, password
     try:
     #check for correct inputs
         data = request.get_json()
@@ -225,14 +225,16 @@ username, password
         #Issues a token
 
         #TOKEN FOR TEST
-        token = "6bf00d02-dffc-4849-a635-a21b08500d61"
-        #token = str(uuid4())
+        #token = "6bf00d02-dffc-4849-a635-a21b08500d61"
+        token = str(uuid4())
         cursor = db.execute('UPDATE users SET token = ? WHERE name = ?', [token, username])
         db.commit()
         db.close()
         #if token issued successfully
         if ( cursor.rowcount == 1):
-            return make_json_response(token,200)
+            a = {}
+            a['token'] = token
+            return make_json_response(a,200)
     #login failed
     return make_json_response(None,False)
 
@@ -374,7 +376,7 @@ def diary_delete():
     #code to delete diary
     db=get_db()
 
-    cursor = db.execute('select * where token = (?)', [token])  
+    cursor = db.execute('select * from users where token = (?)', [token])  
     a = cursor.fetchone() 
     cursor = db.execute('delete from diary_entries where id = ? and author = ?',[diary_id, a['name']])
     db.commit()
