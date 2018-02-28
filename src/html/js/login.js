@@ -34,11 +34,13 @@ function userIsLoggedIn(){
                     if (result.status == true)
                     {
                         console.log("user is logged in");
+document.getElementById("userNavRight").innerHTML = '<a href="./profile.html">Profile</a> | <a href="./logout.html">Logout</a>';
 				
 		    }
                     else if (result.status == false)
                     {
                       console.log("user is not logged in");
+			document.getElementById("userNavRight").innerHTML = '<a href="./login.html">Login</a> | <a href="./signup.html">Register</a>';
                     }
 
                 },
