@@ -17,6 +17,41 @@ function getCookie(c_name) {
     }
 }
 
+function userIsLoggedIn(){
+	
+	// send ajax
+            $.ajax({
+                url: 'http://localhost:8080/users', // url where to submit the request
+                type : "POST", // type of action POST || GET
+                dataType : 'json', // data type
+                data : '{token:"' +getCookie("token") + '"}',
+                contentType: "application/json",
+                success : function(result) {
+
+                    console.log(result.status);
+
+
+                    if (result.status == true)
+                    {
+                        console.log("user is logged in");
+document.getElementById("userNavRight").innerHTML = '<a href="./profile.html">Profile</a> | <a href="./logout.html">Logout</a>';
+				
+		    }
+                    else if (result.status == false)
+                    {
+                      console.log("user is not logged in");
+			document.getElementById("userNavRight").innerHTML = '<a href="./login.html">Login</a> | <a href="./signup.html">Register</a>';
+                    }
+
+                },
+                error: function(xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                }
+            })
+
+
+}
+
 $(document).ready(function(){
          // click on button submit
         $("#submit").on('click', function(e){
