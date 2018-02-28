@@ -1,3 +1,23 @@
+// add function for msg box
+// function closeAlertBox(){
+//     alertBox = document.getElementById("alertBox");
+//     alertClose = document.getElementById("alertClose");
+//     alertBox.parentNode.removeChild(alertBox);
+//     alertClose.parentNode.removeChild(alertClose);
+// };
+
+// window.alert = function(msg){
+//     var id = "alertBox", alertBox, closeId = "alertClose", alertClose;
+//     alertBox = document.createElement("div");
+//     document.body.appendChild(alertBox);
+//     alertBox.id = id;
+//     alertBox.innerHTML = msg;
+//     alertClose = document.createElement("div");
+//     alertClose.id = id;
+//     document.body.appendChild(alertClose);
+//     alertClose.onclick = closeAlertBox;
+// };
+
 $(document).ready(function(){
          // click on button submit
         $("#login").on('click', function(e){
@@ -28,20 +48,20 @@ $(document).ready(function(){
                 success : function(data) {
 
                     console.log(data.status);
-
+                    token = data.result;
 
                     if (data.status == true)
                     {
                         // redirect to the index page
 
                       alert("User successfully logged in!");
-                      window.location= "./index.html";
+                      window.location.href= `index.html?${token}`;
                     }
                     else if (data.status == false)
                     {
                          // have some issues, need to fix
                       alert("Username or password is wrong!");
-                      window.location= "./login.html";
+                      window.location= "login.html";
                     }
 
                 },
@@ -51,3 +71,4 @@ $(document).ready(function(){
             })
         });
 });
+

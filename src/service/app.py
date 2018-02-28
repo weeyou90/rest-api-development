@@ -246,30 +246,27 @@ def users_authenticate():
         #login failed
         return make_json_response(None,False)
 
-@app.route("/users/expire")
+@app.route("/users/expire", methods=['POST'])
 def users_expire():
-    #token
-    try:
-    #check for correct inputs
-        data = request.get_json()
-        token = data['token']
-    except:
-        #print request.data
-        return make_json_response("Invalid inputs",False)
- 
-    #expire a token
-    db=get_db()
-    cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
-    
-    a = cursor.rowcount
-    db.commit()
-    db.close()
-    if ( a==1 ): #if logged out
-        return make_json_response(None, True)
-    if (a==0): #cannot find token
-        return make_json_response(None, False)
+    if not request.is_json:
+        return make_json_response("Invalid request", False) 
+    if request.method == 'POST':
+        post_data = request.get_json()
+        token = post_data.get("token")
 
-    return ("Something went wrong", False)
+        #expire a token
+        db=get_db()
+        cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
+        
+        a = cursor.rowcount
+        db.commit()
+        db.close()
+        if ( a==1 ): #if logged out
+            return make_json_response(None, True)
+        if (a==0): #cannot find token
+            return make_json_response(None, False)
+
+        return ("Something went wrong", False)
 
 @app.route("/users")
 def users():

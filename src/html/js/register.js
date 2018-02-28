@@ -1,3 +1,23 @@
+// add function for msg box
+function closeAlertBox(){
+    alertBox = document.getElementById("alertBox");
+    alertClose = document.getElementById("alertClose");
+    alertBox.parentNode.removeChild(alertBox);
+    alertClose.parentNode.removeChild(alertClose);
+};
+
+window.alert = function(msg){
+    var id = "alertBox", alertBox, closeId = "alertClose", alertClose;
+    alertBox = document.createElement("div");
+    document.body.appendChild(alertBox);
+    alertBox.id = id;
+    alertBox.innerHTML = msg;
+    alertClose = document.createElement("div");
+    alertClose.id = id;
+    document.body.appendChild(alertClose);
+    alertClose.onclick = closeAlertBox;
+};
+
 $(document).ready(function(){
          // click on button submit
         $("#submit").on('click', function(e){
@@ -35,8 +55,6 @@ $(document).ready(function(){
                 success : function(data) {
 
                     console.log(data.result.status);
-
-
                     if (data.result.status == true)
                     {
                         // redirect to the login page
@@ -58,3 +76,5 @@ $(document).ready(function(){
             })
         });
 });
+
+
