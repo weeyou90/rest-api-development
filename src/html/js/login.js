@@ -52,6 +52,25 @@ document.getElementById("userNavRight").innerHTML = '<a href="./profile.html">Pr
 
 }
 
+function loadDiary(){
+ 	     // send ajax
+            $.ajax({
+                url: 'http://localhost:8080/diary', // url where to submit the request
+                type : "GET", // type of action POST || GET
+                dataType : 'json', // data type
+                success : function(result) {
+
+                	console.log(result.status);
+
+                },
+                error: function(xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                }
+            })
+
+	
+
+}
 $(document).ready(function(){
          // click on button submit
         $("#submit").on('click', function(e){
