@@ -236,7 +236,9 @@ def users_expire():
     except:
         #print request.data
         return make_json_response("Invalid inputs",False)
- 
+
+    if token == 0:
+        return make_json_response(None,False) 
     #expire a token
     db=get_db()
     cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
@@ -245,10 +247,11 @@ def users_expire():
     db.commit()
     db.close()
     if ( a==1 ): #if logged out
+	print "logged out"
         return make_json_response(None, True)
     if (a==0): #cannot find token
         return make_json_response(None, False)
-    return ("Something went wrong", False)
+    return make_json_response("Something went wrong", False)
 
 @app.route("/users", methods=['POST'])
 def users():
@@ -264,8 +267,9 @@ def users():
     if is_logged_in(token):
         db=get_db()
         #get user profile based on token if logged in
-        cursor = db.execute('SELECT name, fullname, age FROM users where token = (?)', token)  
-        user_information = cursor.fetchone()    
+        cursor = db.execute('SELECT name, fullname, age FROM users where token = (?)', [token])  
+        user_information = cursor.fetchone()
+	print user_information    
         return make_json_response(user_information, True)
     else:
         return make_json_response("Invalid authentication token.",False)
