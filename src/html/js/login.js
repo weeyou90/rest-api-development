@@ -54,7 +54,9 @@ $(document).ready(function(){
                         alert("Login Successful!")
 			console.log(result.result.token)
 			setCookie("token", result.result.token)
-			console.log("cookie"+getCookie("token"))	
+			console.log("cookie"+getCookie("token"))
+			$(location).attr('href', 'http://localhost/index.html')
+				
 		    }
                     else if (result.status == false)
                     {
