@@ -216,14 +216,14 @@ def users_register():
             db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [username, pw, fullname ,age, '123'])
             #take note of token
             db.commit()
+            # User created response
         else:
             data = {
                 'status': False,
                 'error': 'User already exists!'
             }
             return make_json_response(data)
-
-        # User created response
+        
         return make_json_response({'status': True}, status=201)
 
     else:

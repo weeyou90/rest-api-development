@@ -32,22 +32,23 @@ $(document).ready(function(){
                 dataType : 'json', // data type
                 data : formData,
                 contentType: "application/json",
-                success : function(result) {
+                success : function(data) {
 
-                    console.log(result.status);
+                    console.log(data.result.status);
 
 
-                    if (result.status == true)
+                    if (data.result.status == true)
                     {
                         // redirect to the login page
 
                       alert("User successfully registered!");
-                      location.href("./login.html")
+                      window.location= "./login.html";
                     }
-                    else if (result.status == false)
+                    else if (data.result.status == false)
                     {
                          // have some issues, need to fix
                       alert("User already exists!");
+                      window.location= "./login.html";
 
                     }
 
