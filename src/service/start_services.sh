@@ -2,8 +2,8 @@
 
 apachectl start
 ls
-cd src/service
+cd /service
 
-export FLASK_APP=src/service/app.py
+export FLASK_APP=/service/app.py
 python ./app.py
 

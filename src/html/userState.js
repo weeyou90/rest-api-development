@@ -1,11 +1,11 @@
 
 
 
-function userIsLogined(){
+function userIsLoggedIn(){
+	console.log('checking if user is logged in');
+	console.log(getCookie("token"));
 
-	let userIsIn = true;
-
-	if(userIsIn){
+	if(!!getCookie("token")){
 		//for the first left nav
 		document.getElementById("userNavLeft").innerHTML = "
 		      <li class="nav-item active">

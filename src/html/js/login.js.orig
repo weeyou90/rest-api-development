@@ -1,3 +1,28 @@
+<<<<<<< HEAD
+// add function for msg box
+// function closeAlertBox(){
+//     alertBox = document.getElementById("alertBox");
+//     alertClose = document.getElementById("alertClose");
+//     alertBox.parentNode.removeChild(alertBox);
+//     alertClose.parentNode.removeChild(alertClose);
+// };
+
+// window.alert = function(msg){
+//     var id = "alertBox", alertBox, closeId = "alertClose", alertClose;
+//     alertBox = document.createElement("div");
+//     document.body.appendChild(alertBox);
+//     alertBox.id = id;
+//     alertBox.innerHTML = msg;
+//     alertClose = document.createElement("div");
+//     alertClose.id = id;
+//     document.body.appendChild(alertClose);
+//     alertClose.onclick = closeAlertBox;
+// };
+
+$(document).ready(function(){
+         // click on button submit
+        $("#login").on('click', function(e){
+=======
 function setCookie(c_name, value, exdays) {
     var exdate = new Date();
     exdate.setDate(exdate.getDate() + exdays);
@@ -20,11 +45,16 @@ function getCookie(c_name) {
 $(document).ready(function(){
          // click on button submit
         $("#submit").on('click', function(e){
+>>>>>>> dac0a0c7a4130b3e8a1994cdf70e199d2776a004
 
           e.preventDefault();
           e.returnValue = false;
 
+<<<<<<< HEAD
+          if (document.getElementById("username").value == "" || document.getElementById("password").value == "")
+=======
          if (document.getElementById("username").value == "" || document.getElementById("password").value == "")
+>>>>>>> dac0a0c7a4130b3e8a1994cdf70e199d2776a004
           {
             alert("Please fill up all the fields");
             return;
@@ -44,6 +74,25 @@ $(document).ready(function(){
                 dataType : 'json', // data type
                 data : formData,
                 contentType: "application/json",
+<<<<<<< HEAD
+                success : function(data) {
+
+                    console.log(data.status);
+                    token = data.result;
+
+                    if (data.status == true)
+                    {
+                        // redirect to the index page
+
+                      alert("User successfully logged in!");
+                      window.location.href= `index.html?${token}`;
+                    }
+                    else if (data.status == false)
+                    {
+                         // have some issues, need to fix
+                      alert("Username or password is wrong!");
+                      window.location= "login.html";
+=======
                 success : function(result) {
 
                     console.log(result.status);
@@ -52,15 +101,16 @@ $(document).ready(function(){
                     if (result.status == true)
                     {
                         alert("Login Successful!")
-      console.log(result.result.token)
-      setCookie("token", result.result.token)
-      console.log("cookie"+getCookie("token"))
-      $(location).attr('href', 'http://localhost/index.html')
-        
-        }
+			console.log(result.result.token)
+			setCookie("token", result.result.token)
+			console.log("cookie"+getCookie("token"))
+			$(location).attr('href', 'http://localhost/index.html')
+				
+		    }
                     else if (result.status == false)
                     {
                       alert("Login Failed!");
+>>>>>>> dac0a0c7a4130b3e8a1994cdf70e199d2776a004
                     }
 
                 },
@@ -70,3 +120,7 @@ $(document).ready(function(){
             })
         });
 });
+<<<<<<< HEAD
+
+=======
+>>>>>>> dac0a0c7a4130b3e8a1994cdf70e199d2776a004
