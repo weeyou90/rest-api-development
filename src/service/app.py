@@ -451,7 +451,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-    DATABASE=('/src/service/flaskr.db'),
+    DATABASE=('/service/flaskr.db'),
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
@@ -494,7 +494,7 @@ def init_db():
                 print msg
         db.commit()
 
-@app.cli.command('initdb')
+@app.cli.command('initdb'
 def initdb_command():
     init_db()
     print('Initialised the database')
