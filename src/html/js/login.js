@@ -48,14 +48,14 @@ $(document).ready(function(){
                 success : function(data) {
 
                     console.log(data.status);
-                    token = data.result;
+                    token = data.result.token;
 
                     if (data.status == true)
                     {
                         // redirect to the index page
 
                       alert("User successfully logged in!");
-                      window.location.href= `index.html?${token}`;
+                      window.location.href= `profile.html?${token}`;
                     }
                     else if (data.status == false)
                     {

@@ -2,7 +2,7 @@ FROM ubuntu:latest
 RUN apt-get update 
 RUN apt-get install -y python-pip
 RUN apt-get install -y apache2
-RUN apt-get install -y gunicorn
+#RUN apt-get install -y gunicorn
 COPY requirements.txt /requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -U setuptools pip wheel && pip install -r /requirements.txt
@@ -24,8 +24,6 @@ WORKDIR ./src
 
 ADD ./src/service /service
 ADD ./src/html /var/www/html
-# ADD ./src/html /var/www/html
-COPY . /src
 EXPOSE 80
 EXPOSE 8080
 CMD ["/bin/bash", "/service/start_services.sh"]

@@ -1,18 +1,9 @@
 #/usr/bin/python
 
-# from flask_cors import CORS
-# from app import app, db 
 from werkzeug import generate_password_hash, check_password_hash
-from flask import Flask,request,session,abort,jsonify,redirect,render_template, escape, make_response, url_for, flash
-# from flask_sqlalchemy import SQLAlchemy
-import json
-import os
+from flask import Flask,request,session,abort,jsonify,redirect,render_template, escape, make_response, url_for, flash,g
 from uuid import uuid4
-import datetime
-# from forms import SignupForm, LoginForm, NewEntryForm
-
-
-from flask import Flask, request, session, g
+from forms import SignupForm, LoginForm, NewEntryForm
 from flask_cors import CORS
 import sys
 import json
@@ -21,11 +12,15 @@ import sqlite3
 from datetime import datetime
 
 
-app = Flask(__name__)
+app = Flask(__name__
+            # static_url_path='',
+            # static_folder='/service/static',
+            # template_folder='/service/templates'
+            )
 app.config.from_object(__name__)
 
 app.config.update(dict(
-    DATABASE=('/src/service/flaskr.db'),
+    DATABASE=('/service/flaskr.db'),
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
@@ -36,9 +31,11 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 CORS(app)
 
 # Remember to update this list
-ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permissions'] 
+ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permissions','/diary/new_entry'] 
+
 
 app.config['SECRET_KEY'] = os.urandom(24)
+
 #================================================================
 #        D B    H E L P E R  F U N C TI O N S
 #================================================================
@@ -93,7 +90,8 @@ def make_json_response(data, status=True, code=200):
             to_serialize['result'] = data
     else:
         to_serialize['status'] = False
-        to_serialize['error'] = data
+        if data is not None:
+            to_serialize['error'] = data
     response = app.response_class(
         response=json.dumps(to_serialize),
         status=code,
@@ -101,21 +99,9 @@ def make_json_response(data, status=True, code=200):
     )
     return response
 
-
-@app.before_request
-def check_user_status():
-    if 'user_name' not in session:
-        session['user_name'] = None
-        session['token'] = None
-    # if request.method =="POST":
-    #     token = session.pop('_csrf_token',None)
-    #     if not token or token != request.form.get('_csrf_token'):
-    #         abort(403)
-    
-
 def is_logged_in(token):
     if token == 0:
-        return False; 
+        return False;    
 
     db = get_db()
     cursor = db.execute('SELECT * from users where token = ?',[token])
@@ -130,6 +116,7 @@ def is_logged_in(token):
     cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
     db.commit()
     db.close()
+    
     return False
 
 # =======================================================
@@ -137,25 +124,8 @@ def is_logged_in(token):
 # =======================================================
 @app.route("/")
 def index():
-    '''
-    db=get_db()
-    cursor2 = db.execute('Select * from diary_entries where public=1')
-    posts = cursor2.fetchall()
-    
-    if session['token']:
-        db=get_db()
-        session_user_name = session['user_name']
-        cursor = db.execute('SELECT * FROM users where name =(?)' ,[session_user_name])  
-        cursor2 = db.execute('Select * from diary_entries where author=(?)', [session_user_name])
-        user_posts = cursor2.fetchall()
-        user = cursor.fetchone()
-        make_json_response(session_user_name)
-        return render_template('index.html', users=user, posts=posts, user_posts=user_posts )
-
-    
-    # return render_template('index.html', posts=posts )
-    '''
-    return make_json_response(ENDPOINT_LIST)
+   """Return list of endpoints"""
+   return make_json_response(ENDPOINT_LIST)
 
 @app.route("/meta/heartbeat")
 def meta_heartbeat():
@@ -176,104 +146,118 @@ def meta_short_answer_questions():
         short_answer_questions = f.read().strip().split("\n")
     return make_json_response(short_answer_questions)
 
+@app.route("/clear")
+def clear():
+    #test function to clear database of all users
+    db=get_db()
+    cursor = db.execute('DELETE from users')
+    cursor = db.execute('DELETE from diary_entries')
+    db.commit()
+    db.close()
 
-    
-# @verify_required_params(['email', 'password', 'name'])
-# @validate_email_format
+    return make_json_response(cursor.rowcount) 
+
 
 # ====================================================
 #                 U S E R
 # ====================================================
 @app.route("/users/register", methods=['POST'])
 def users_register():
-    if not request.is_json:
-        return make_json_response("Invalid request", False) 
-    if request.method == 'POST':
-        post_data = request.get_json()
-        username = post_data.get("username")
-        password = post_data.get("password")
-        fullname = post_data.get("fullname")
-        age = post_data.get("age")
+#username, password, fullname, age
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        fullname = data['fullname']
+        age = data['age']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
+    
+    db=get_db()
 
-        db=get_db()
-        submitted_name = username
-        cursor = db.execute('SELECT * FROM users where name = (?)' , [submitted_name])
-        a = cursor.fetchone()
-        if a is None: 
-            db=get_db()
-            pw = generate_password_hash(password)
-            db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [username, pw, fullname ,age, '123'])
-            #take note of token
-            db.commit()
-            # User created response
-        else:
-            data = {
-                'status': False,
-                'error': 'User already exists!'
-            }
-            return make_json_response(data)
-        
-        return make_json_response({'status': True}, code=201)
-
-    else:
-        print("Detect no posting data")
+    #check if username exists
+    cursor = db.execute('SELECT * FROM users where name = (?)' , [username])
+    a = cursor.fetchone()
+    if a is not None:
+        return make_json_response("User already exists!", False)
+    #hash and salt pw
+    hashedpw = generate_password_hash(password)
+    cursor = db.execute('insert into users (id, name,password,fullname,age, token) values (null, ?,?,?,?, ?)', [username, hashedpw, fullname, age, '0'])
+    db.commit()
+    db.close()
+   
+    if ( cursor.rowcount == 1): #if insert successful
+        return make_json_response(None, True,201)
+    return make_json_response("Unknown Error, Registration Failed", False)
 
 @app.route("/users/authenticate", methods=['POST'])
 def users_authenticate():
-    if not request.is_json:
-        return make_json_response("Invalid request", False) 
-    if request.method == 'POST':
-        post_data = request.get_json()
-        username = post_data.get("username")
-        password = post_data.get("password")
+#username, password
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
 
-        db=get_db()
-        cursor = db.execute('SELECT * FROM users where name = ?', [username])  
-        user = cursor.fetchone()
+    db=get_db()
+    cursor = db.execute('SELECT * FROM users where name = ?', [username])  
+    user = cursor.fetchone()
 
-        #check if user is not none and hashed+salted input = stored password
-        if user is not None and check_password_hash(user['password'], password) is True:
-            #TOKEN FOR TEST
-            # token = "6bf00d02-dffc-4849-a635-a21b08500d61"
-            #issue a token
-            token = str(uuid4())
-            cursor = db.execute('UPDATE users SET token = ? WHERE name = ?', [token, username])
-            db.commit()
-            db.close()
-            #if token issued successfully
-            if ( cursor.rowcount == 1):
-                return make_json_response(token,200)
-        #login failed
-        return make_json_response(None,False)
+    #check if user is not none and hashed+salted input = stored password
+    if user is not None and check_password_hash(user['password'], password) is True:
+        #Issues a token
+
+        #TOKEN FOR TEST
+        #token = "6bf00d02-dffc-4849-a635-a21b08500d61"
+        token = str(uuid4())
+        cursor = db.execute('UPDATE users SET token = ? WHERE name = ?', [token, username])
+        db.commit()
+        db.close()
+        #if token issued successfully
+        if ( cursor.rowcount == 1):
+            a = {}
+            a['token'] = token
+            return make_json_response(a,200)
+    #login failed
+    return make_json_response(None,False)
 
 @app.route("/users/expire", methods=['POST'])
 def users_expire():
-    if not request.is_json:
-        return make_json_response("Invalid request", False) 
-    if request.method == 'POST':
-        post_data = request.get_json()
-        token = post_data.get("token")
+#token
+    try:
+    #check for correct inputs
+        data = request.get_json()
+        token = data['token']
+    except:
+        #print request.data
+        return make_json_response("Invalid inputs",False)
 
-        #expire a token
-        db=get_db()
-        cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
-        
-        a = cursor.rowcount
-        db.commit()
-        db.close()
-        if ( a==1 ): #if logged out
-            return make_json_response(None, True)
-        if (a==0): #cannot find token
-            return make_json_response(None, False)
+    if token == 0:
+        return make_json_response(None,False) 
+    #expire a token
+    db=get_db()
+    cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
+    
+    a = cursor.rowcount
+    db.commit()
+    db.close()
+    if ( a==1 ): #if logged out
+        return make_json_response(None, True)
+    if (a==0): #cannot find token
+        return make_json_response(None, False)
+    return make_json_response("Something went wrong", False)
 
-        return ("Something went wrong", False)
-
-@app.route("/users",methods=['POST'])
+@app.route("/users", methods=['POST'])
 def users():
     try:
     #check for correct inputs
         data = request.get_json()
-        token = data.get("token")
+        token = data['token']
     except:
         #print request.data
         return make_json_response("Invalid inputs",False)
@@ -281,12 +265,17 @@ def users():
     #check is logged in 
     if is_logged_in(token):
         db=get_db()
+        #get user profile based on token if logged in
         cursor = db.execute('SELECT name, fullname, age FROM users where token = (?)', [token])  
         user_information = cursor.fetchone()    
         return make_json_response(user_information, True)
     else:
         return make_json_response("Invalid authentication token.",False)
         
+# @app.errorhandler(404)
+# def not_found(error):
+#   return make_json_response(jsonify({'eorror':'Not Found'}), 404)
+
 # =====================================================
 #                    D I A R Y
 # =====================================================
@@ -312,8 +301,10 @@ def diary():
             return make_json_response("Invalid inputs",False)
     
         if is_logged_in(token):
+            #get username based on token
             cursor = db.execute('SELECT * FROM users where token = (?)', [token])  
             a = cursor.fetchone()
+            #get diaries based on username
             cursor = db.execute('SELECT * FROM diary_entries where author = ?', [a['name']])
             a = cursor.fetchall()
             return make_json_response(a, True)
@@ -342,7 +333,6 @@ def diary_create():
     if not (is_logged_in(token)):
         return make_json_response("Invalid authentication token",False)
     
-    #====code to insert diary====
     db=get_db()
     cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
     a = cursor.fetchone()
@@ -372,12 +362,11 @@ def diary_delete():
 
     if not (is_logged_in(token)):
         return make_json_response("Invalid authentication token",False)
-
     
     #code to delete diary
     db=get_db()
 
-    cursor = db.execute('select * where token = (?)', [token])  
+    cursor = db.execute('select * from users where token = (?)', [token])  
     a = cursor.fetchone() 
     cursor = db.execute('delete from diary_entries where id = ? and author = ?',[diary_id, a['name']])
     db.commit()
@@ -423,4 +412,4 @@ if __name__ == '__main__':
     os.chdir(dname)
     # Run the application
     ## set debug as True for auto reload
-    app.run(debug=False, threaded=True, port=8080, host="0.0.0.0")
+app.run(debug=True, threaded=True, port=8080, host="0.0.0.0")
