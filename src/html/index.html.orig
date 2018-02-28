@@ -1,38 +1,51 @@
 <html>
    <head>
-      <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
-      <link href="./stylesheet.css" rel="stylesheet">
+      <link href="./css/bootstrap.min.css" rel="stylesheet">
+      <link href="./css/stylesheet.css" rel="stylesheet">
       <link rel="stylesheet" href="../css/bootstrap.min.css">
+         <script src="./js/demo.js"></script>
+         <script src="./js/jquery-3.3.1.min.js"></script>
+         <script src="./js/bootstrap.min.js"></script>
+         <script src="./js/index.js"></script>
    </head>
+<<<<<<< HEAD
    <style type="text/css">
       .error{
       color:red;
       };
    </style>
+
    <body>
-      <body>
+=======
+  
+   
+   <body  onload="userIsLoggedIn()">
+>>>>>>> dac0a0c7a4130b3e8a1994cdf70e199d2776a004
          <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="index">My Secret Diary</a>
+            <a class="navbar-brand" href="index.html">My Secret Diary</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-<!--                <ul class="navbar-nav mr-auto">
-                  <li class="nav-item active">
-                     <a class="nav-link" href="{{url_for('index')}}">Home</a>
-                  </li>
-                  <li class="nav-item active">
-                     <a class="nav-link" href="{{url_for('new_entry')}}">New Entry</a>
-                  </li>
-               </ul> -->
-               <ul class="nav navbar-nav">
+<<<<<<< HEAD
+               <ul class="nav navbar-nav navbar-right">
+
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"  aria-expanded="false"> Hi </a>
+                  <div calss="dropdown-menu" aria-labelledby="navbarDropdown">
+                     <a class="dropdown-item" id="user_info" href="#"> Profile</a>
+
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" id="user_expire" href="#">Logout</a>
+
                   <li class="nav-item active">
                      <a class="nav-link" href="login.html">Login</a>
                   </li>
                   <li class="nav-item active">
                      <a class="nav-link" href="signup.html">Register</a>
                   </li>
+
                </ul>
             </div>
          </nav>
@@ -47,7 +60,14 @@
             <li>Delete an existing diary entry</li>
             <li>Toggle the permissions on an existing diary entry</li>
          </ul>
+=======
+               <div id="userNavLeft"></div>
+		<div id="userNavRight"></div>
+            </div>
+         </nav>
+         
          <div id="register"></div>
+>>>>>>> dac0a0c7a4130b3e8a1994cdf70e199d2776a004
 
          <div id="demo_heartbeat">
          </div>
@@ -59,8 +79,13 @@
             <p>&copy; CS5331 Assignment 1 Group 10</p>
          </footer>
          </div>
+<<<<<<< HEAD
+=======
          <script src="./js/demo.js"></script>
          <script src="./js/jquery-3.3.1.min.js"></script>
          <script src="./js/bootstrap.min.js"></script>
+	<script src="./js/login.js"></script>
+	<script src="./userState.js">
+>>>>>>> dac0a0c7a4130b3e8a1994cdf70e199d2776a004
    </body>
 </html>

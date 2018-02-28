@@ -4,31 +4,30 @@
 	<meta charset="utf-8">
  	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<link rel="stylesheet" href="./css/stylesheet.css">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-
+  <script src="./userState.js"></script>
+  <script src="./js/jquery-3.3.1.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
 
 </head>
 <body onload="getData()">
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  			<a class="navbar-brand" href="./index.html">My Secret Diary</a>
-  			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="./index.html">Home</a>
+ <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="./index.html">My Secret Diary</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Hi,
+        <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a id="user_info" href="#">Profile</a></li>
+          <li><a id="user_expire" href="#">Signout</a></li>
+        </ul>
       </li>
-		<div id="userNavLeft"></div>
     </ul>
-    <ul class="nav navbar-nav"> 
-	<div id="userNavRight"></div>
-     </ul>
-    
   </div>
-</nav>
-  	<br>
-	<div class="container jumbo-container">
+</nav> 
+ 	<div class="container jumbo-container">
   		<div class="jumbotron">
     		<h1>Profile</h1>      
     		<p>See your information here</p>
@@ -38,16 +37,90 @@
 	<div class="container">
 		<div id="profile"></div>
 	</div>
+   <table class="table" id="mytable">
+<thead>
+<tr>
+  <th>Name</th>
+  <th>Fullname</th>
+  <th>Age</th>
+</tr>
+</thead>
+</table>
         
-
-	<script src="./userState.js"></script>
-	<script src="./js/jquery-3.3.1.min.js"></script>
-        <script src="./js/bootstrap.min.js"></script>
        
 	<script type="text/javascript">
-   	function getDate(){ <!-- call all respective scripts to render different parts of the document-->
-       
-   	});
+  var token = window.location.search.substring(1);
+  var formData = `{\"token\": "${token}"}`;
+  $.ajax({
+        url: 'http://localhost:8080/users', // url where to submit the request
+        type : "POST", // type of action POST || GET
+        dataType : 'json', // data type
+        data : formData,
+        contentType: "application/json",
+        success : function(data) {
+
+            console.log(data);
+            var trHTML = '';
+            // $.each(response, function(i, item){
+            //   trHTML +='<tr><td>' + item.name + '</td><td>' + item.fullname +'</td><td>'+item.age+'</td></tr>'; });
+            // $("#mytable").append(trHTML);
+            // });
+
+            if (data.status)
+            {
+              for (var i = 0; i< data.result.length; i++){
+                var row = $('<tr><td>'+data.result[i].name +'</td><td>'+data.result[i].fullname+'</td><td>'+data.result[i].age+'</td></tr>');
+                $('#mytable').append(row);
+              }
+            }
+            else
+            {
+                 // have some issues, need to fix
+              alert("Invalid token");
+              window.location.href = "index.html";
+            }
+
+        }
+    })
+
+   $("#user_info").click(function() {
+      window.location.href = `profile.html?${token}`;
+    });
+
+
+  $("#user_expire").on('click', function(e){
+    e.preventDefault();
+    e.returnValue = false;
+    // send ajax
+    $.ajax({
+        url: 'http://localhost:8080/users/expire', // url where to submit the request
+        type : "POST", // type of action POST || GET
+        dataType : 'json', // data type
+        data : formData,
+        contentType: "application/json",
+        success : function(data) {
+
+            console.log(data);
+
+            if (data.status == true)
+            {
+                // redirect to the index page
+              alert("Successfully logged out");
+              window.location.href= "index.html";
+            }
+            else if (data.status == false)
+            {
+                 // have some issues, need to fix
+              alert("Already logged out");
+              window.location.href = "index.html";
+            }
+
+        },
+        error: function(xhr, resp, text) {
+            console.log(xhr, resp, text);
+        }
+    })
+  });
 	</script>
 	
     </div>

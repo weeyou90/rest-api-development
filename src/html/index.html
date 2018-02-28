@@ -1,25 +1,53 @@
 <html>
    <head>
-      <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
-      <link href="./stylesheet.css" rel="stylesheet">
+      <link href="./css/bootstrap.min.css" rel="stylesheet">
+      <link href="./css/stylesheet.css" rel="stylesheet">
       <link rel="stylesheet" href="../css/bootstrap.min.css">
+         <script src="./js/demo.js"></script>
+         <script src="./js/jquery-3.3.1.min.js"></script>
+         <script src="./js/bootstrap.min.js"></script>
+         <script src="./js/index.js"></script>
    </head>
-  
-   
    <body  onload="renderNav();">
+
          <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="index.html">My Secret Diary</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-               <div id="userNavLeft"></div>
-		<div id="userNavRight"></div>
+               <ul class="nav navbar-nav navbar-right">
+
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"  aria-expanded="false"> Hi </a>
+                  <div calss="dropdown-menu" aria-labelledby="navbarDropdown">
+                     <a class="dropdown-item" id="user_info" href="#"> Profile</a>
+
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" id="user_expire" href="#">Logout</a>
+
+                  <li class="nav-item active">
+                     <a class="nav-link" href="login.html">Login</a>
+                  </li>
+                  <li class="nav-item active">
+                     <a class="nav-link" href="signup.html">Register</a>
+                  </li>
+
+               </ul>
             </div>
          </nav>
-         
-         <div id="register"></div>
+         <p>Requirements for the front end are as follows:</p>
+         <ul>
+            <li>Register a user</li>
+            <li>Login</li>
+            <li>Logout</li>
+            <li>Display all public diary entries</li>
+            <li>Display an authenticated user's diary entries</li>
+            <li>Create a new diary entry</li>
+            <li>Delete an existing diary entry</li>
+            <li>Toggle the permissions on an existing diary entry</li>
+         </ul>
 
          <div id="demo_heartbeat">
          </div>
@@ -31,11 +59,14 @@
             <p>&copy; CS5331 Assignment 1 Group 10</p>
          </footer>
          </div>
+<<<<<<< HEAD
          <script src="./js/demo.js"></script>
          <script src="./js/jquery-3.3.1.min.js"></script>
          <script src="./js/bootstrap.min.js"></script>
 	<script src="./js/login.js"></script>
 	<script src="./js/userState.js">
 	
+=======
+>>>>>>> a67d9a4f0ad49df98e1adfc5f7786394e435b6d8
    </body>
 </html>
