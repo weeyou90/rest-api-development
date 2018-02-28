@@ -49,7 +49,6 @@ $(document).ready(function(){
                          // have some issues, need to fix
                       alert("User already exists!");
                       window.location= "./login.html";
-
                     }
 
                 },
