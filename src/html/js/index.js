@@ -2,7 +2,7 @@ $(document).ready(function(){
 	var token = window.location.search.substring(1);
 
 	 $("#user_info").click(function() {
-      window.location.href = `info.html?${token}`;
+      window.location.href = `profile.html?${token}`;
     });
 
 

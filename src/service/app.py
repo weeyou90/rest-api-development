@@ -268,12 +268,12 @@ def users_expire():
 
         return ("Something went wrong", False)
 
-@app.route("/users")
+@app.route("/users",methods=['POST'])
 def users():
     try:
     #check for correct inputs
         data = request.get_json()
-        token = data['token']
+        token = data.get("token")
     except:
         #print request.data
         return make_json_response("Invalid inputs",False)
@@ -281,7 +281,7 @@ def users():
     #check is logged in 
     if is_logged_in(token):
         db=get_db()
-        cursor = db.execute('SELECT name, fullname, age FROM users where token = (?)', token)  
+        cursor = db.execute('SELECT name, fullname, age FROM users where token = (?)', [token])  
         user_information = cursor.fetchone()    
         return make_json_response(user_information, True)
     else:
