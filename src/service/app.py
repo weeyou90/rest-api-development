@@ -494,7 +494,7 @@ def init_db():
                 print msg
         db.commit()
 
-@app.cli.command('initdb'
+@app.cli.command('initdb')
 def initdb_command():
     init_db()
     print('Initialised the database')
