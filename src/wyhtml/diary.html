@@ -1,0 +1,136 @@
+<html>
+<head>
+
+<script src="./jquery.js"></script>
+<script src="./shared.js"></script>
+<script>
+$(document).ready(function(){
+	tokencookie = getCookie("token");
+	tokendata = JSON.stringify({token:tokencookie});
+	$.ajax({
+		url: 'http://localhost:8080/users', // url where to submit the request
+		type : "POST", // type of action POST || GET
+		dataType : 'json', // data type
+		data : tokendata,
+		contentType: "application/json",
+		success : function(data){
+		    if (data.status == true) {		
+		    	$("#diary").css("display","block")
+			getdiary(tokendata)
+		    }
+		    else {
+			window.location= "/"
+		    }
+
+		},
+		error: function(xhr, resp, text) {
+		    console.log(xhr, resp, text);
+		}
+	});
+	$('body').on('click', '.del', function () {
+		var id = $(this).attr('id')
+		id = id.substring(1)
+		var formdata = JSON.stringify({id:id, token:tokencookie})
+		$.ajax({
+			url: 'http://localhost:8080/diary/delete', // url where to submit the request
+			type : "POST", // type of action POST || GET
+			dataType : 'json', // data type
+			data : formdata,
+			contentType: "application/json",
+			success : function(data){
+			    if (data.status == true) {		
+			    	$("#diary").html("")
+				getdiary(tokendata)
+			    }
+			    else {
+				alert(data.result)
+			    }
+
+			},
+			error: function(xhr, resp, text) {
+			    console.log(xhr, resp, text);
+			}
+		});   
+	});
+	
+	$('body').on('click', '.mod', function () {
+		var id = $(this).attr('id')
+		var pub =$(this).attr('name')
+		pub = (pub==0)?1:0
+		id = id.substring(1)
+		var formdata = JSON.stringify({id:id, token:tokencookie, public:pub})
+		$.ajax({
+			url: 'http://localhost:8080/diary/permissions', // url where to submit the request
+			type : "POST", // type of action POST || GET
+			dataType : 'json', // data type
+			data : formdata,
+			contentType: "application/json",
+			success : function(data){
+			    if (data.status == true) {		
+			    	$("#diary").html("")
+				getdiary(tokendata)
+			    }
+			    else {
+				alert(data.result)
+			    }
+
+			},
+			error: function(xhr, resp, text) {
+			    console.log(xhr, resp, text);
+			}
+		});
+	});
+
+});
+
+function getdiary(tokendata) {
+	// send ajax
+	$.ajax({
+		url: 'http://localhost:8080/diary', // url where to submit the request
+		type : "POST", // type of action POST || GET
+		dataType : 'json', // data type
+		data : tokendata,
+		contentType: "application/json",
+		success : function(data) {
+
+		    console.log(data.status);
+		    if (data.status == true)
+		    {
+		    	for (x in data.result) {
+				var d = data.result
+				$("#diary").append("Title: " + d[x].title)
+				var pub = (d[x].public==1)? "(Public)" : "(Private)"
+				$("#diary").append(" " + pub +"<BR>")
+				$("#diary").append("Text: " + d[x].text +"<br>")
+				$("#diary").append("<button class='del' id=d" + d[x].id + ">delete </a></button><button class='mod' id=m" + d[x].id + " name="+d[x].public+">change permission </button>")
+				$("#diary").append("<br><br>")
+			}
+		    }
+		    else
+		    {
+		       alert(data.error);
+		       window.location= "/"
+		       console.log(data.error)
+		      //window.location= "./login.html";
+		    }
+
+		},
+		error: function(xhr, resp, text) {
+		    console.log(xhr, resp, text);
+		}
+	});
+
+}
+</script>
+
+</head>
+<body>
+<div id="diary" style:"display:none">
+
+</div>
+
+
+<a href="/">home</a>
+
+</body>
+</html>

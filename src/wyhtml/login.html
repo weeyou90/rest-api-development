@@ -1,0 +1,32 @@
+<html>
+<head>
+
+<script src="./jquery.js"></script>
+<script src="./shared.js"></script>
+<script>
+$(document).ready(function(){
+
+	// click on button submit
+	$("#submit").on('click', function(e){
+		var name = $("#username").val()
+		var pw = $("#pw").val()
+		var logindata = JSON.stringify({username:name,password:pw})
+
+		login(logindata);
+			    
+	});
+});
+</script>
+
+</head>
+<body>
+
+User: <input id='username' type='text'><br>
+PW: <input id='pw' type='password'><br>
+
+<input id='submit' type='button' value='submit'>
+
+<a href="/">home</a>
+
+</body>
+</html>

@@ -100,14 +100,15 @@ def make_json_response(data, status=True, code=200):
     return response
 
 def is_logged_in(token):
-    if token == 0:
+    print("token is" + token)
+    if token == "0":
         return False;    
+    print(token)
 
     db = get_db()
     cursor = db.execute('SELECT * from users where token = ?',[token])
     a = cursor.fetchall()
 
-    print (len(a))
     if len(a) == 1:
         return True
     if len(a) == 0:
@@ -116,7 +117,7 @@ def is_logged_in(token):
     cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
     db.commit()
     db.close()
-    
+    print("something went wrong") 
     return False
 
 # =======================================================
@@ -239,6 +240,8 @@ def users_expire():
 
     if token == 0:
         return make_json_response(None,False) 
+    
+    print(token)
     #expire a token
     db=get_db()
     cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
@@ -269,7 +272,6 @@ def users():
         #get user profile based on token if logged in
         cursor = db.execute('SELECT name, fullname, age FROM users where token = (?)', [token])  
         user_information = cursor.fetchone()
-	print user_information    
         return make_json_response(user_information, True)
     else:
         return make_json_response("Invalid authentication token.",False)
@@ -328,7 +330,7 @@ def diary_create():
         public = data['public']
         text = data['text']
     except:
-        #print request.data
+        print request.data
         return make_json_response("Invalid inputs",False)
 
     #authenticate
@@ -359,7 +361,7 @@ def diary_delete():
         token = data['token']
         diary_id = data['id']
     except:
-        print request.data
+        #print request.data
         return make_json_response("Invalid inputs",False)
 
     if not (is_logged_in(token)):

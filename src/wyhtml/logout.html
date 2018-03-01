@@ -1,0 +1,43 @@
+<html>
+<head>
+
+<script src="./jquery.js"></script>
+<script src="./shared.js"></script>
+<script>
+$(document).ready(function(){
+	token = getCookie("token")
+	if (typeof token == "undefined") token = 0
+	setCookie("token",0)
+	tokendata = JSON.stringify({token:token})
+	$.ajax({
+		url: 'http://localhost:8080/users/expire', // url where to submit the request
+		type : "POST", // type of action POST || GET
+		dataType : 'json', // data type
+		data : tokendata,
+		contentType: "application/json",
+		success : function(data) {
+		console.log(tokendata)
+		    if (data.status == true)
+		    {
+		    	window.location= "/";
+		    }
+		    else
+		    {
+			console.log("fail")
+			window.location= "/";       
+		    }
+
+		},
+		error: function(xhr, resp, text) {
+		    console.log(xhr, resp, text);
+		}
+	});
+});
+
+
+</script>
+</head>
+<body>
+
+</body>
+</html>
