@@ -44,12 +44,20 @@
 			for (x in data.result) {
 				console.log('data.result');
 				console.log(x);
+				let eye-icon;
+				if(data.result[x].public==0){ //1 is public
+					eye-icon = "<i class='fa fa-eye-slash' id="+data.result[x].id+"></i>"
+				}else{
+					eye-icon = "<i class='fa fa-eye' id="+data.result[x].id+"></i>"
+				}
 				$("#public_diary").append(
 				"<div class='card'style='width: 100%;'>" +
 						  "<div class='card-body'>" +
 						    "<h5 class='card-title'>" + data.result[x].title + "</h5>" + 
 						    "<h6 class='card-subtitle mb-2 text-muted'>By: "+ data.result[x].author +"<br>On: "+ data.result[x].publish_date +
-							<i class="fa fa-eye"></i>  +
+							eye-icon+
+							"<i class='fa fa-trash' id="+data.result[x].id+"></i>"  +
+
 						    "</h6>"+
 						    "<p class='card-text'>"+ data.result[x].text +"</p>"+
 						    "<a href='#' class='card-link' data-toggle='modal' data-target=" + "#"+x+ ">Read more</a>"+
