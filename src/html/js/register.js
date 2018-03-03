@@ -1,26 +1,6 @@
-// add function for msg box
-function closeAlertBox(){
-    alertBox = document.getElementById("alertBox");
-    alertClose = document.getElementById("alertClose");
-    alertBox.parentNode.removeChild(alertBox);
-    alertClose.parentNode.removeChild(alertClose);
-};
-
-window.alert = function(msg){
-    var id = "alertBox", alertBox, closeId = "alertClose", alertClose;
-    alertBox = document.createElement("div");
-    document.body.appendChild(alertBox);
-    alertBox.id = id;
-    alertBox.innerHTML = msg;
-    alertClose = document.createElement("div");
-    alertClose.id = id;
-    document.body.appendChild(alertClose);
-    alertClose.onclick = closeAlertBox;
-};
-
 $(document).ready(function(){
          // click on button submit
-        $("#submitRegister").on('click', function(e){
+        $("#submit").on('click', function(e){
 
           e.preventDefault();
           e.returnValue = false;
@@ -62,12 +42,11 @@ $(document).ready(function(){
                       alert("User successfully registered!");
                       window.location= "./login.html";
                     }
-                    else
+                    else if (data.status == false)
                     {
-                      
-                       alert("User name already exists!);
-                       console.log(data.error)
-		      //window.location= "./login.html";
+                         // have some issues, need to fix
+                      alert("User already exists!");
+                      window.location= "./login.html";
                     }
 
                 },

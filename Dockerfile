@@ -23,7 +23,7 @@ RUN echo "$user     hard    nproc       20" >> /etc/security/limits.conf
 WORKDIR ./src
 
 ADD ./src/service /service
-ADD ./src/wyhtml /var/www/html
+ADD ./src/html /var/www/html
 EXPOSE 80
 EXPOSE 8080
 CMD ["/bin/bash", "/service/start_services.sh"]
