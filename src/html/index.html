@@ -44,12 +44,12 @@
 						    "<h5 class='card-title'>" + data.result[x].title + "</h5>" + 
 						    "<h6 class='card-subtitle mb-2 text-muted'>By: "+ data.result[x].author +"<br>On: "+ data.result[x].publish_date +"</h6>"+
 						    "<p class='card-text'>"+ data.result[x].text +"</p>"+
-						    "<a href='#' class='card-link' data-toggle='modal' data-target=" + "lol"+x+ ">Read more</a>"+
+						    "<a href='#' class='card-link' data-toggle='modal' data-target=" + "#"+x+ ">Read more</a>"+
 						  "</div>"+
 				"</div><br><br>"+
 
 
-				"<div class='modal fade' id='"+"lol"+x+"' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>"+
+				"<div class='modal fade' id='"+x+"' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>"+
 				  "<div class='modal-dialog' role='document'>"+
 				    "<div class='modal-content'>"+
 				      "<div class='modal-header'>"+
