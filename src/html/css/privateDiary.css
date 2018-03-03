@@ -1,3 +1,14 @@
 .canClick {
-cursor: pointer;
-	}
+	cursor: pointer;
+}
+
+
+.iconsPlacement{
+	float:right;
+}
+
+
+.eyeMargin{
+
+	margin-right: 10px;
+}

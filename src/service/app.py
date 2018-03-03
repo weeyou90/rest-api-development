@@ -292,7 +292,7 @@ def diary():
     db=get_db() 
     
     if request.method == 'GET':
-        cursor = db.execute('SELECT * FROM diary_entries where public = 1')  
+        cursor = db.execute('SELECT * FROM diary_entries where public = 1 order by publish_date desc')  
         a = cursor.fetchall()
         return make_json_response(a)
 
@@ -310,7 +310,7 @@ def diary():
             cursor = db.execute('SELECT * FROM users where token = (?)', [token])  
             a = cursor.fetchone()
             #get diaries based on username
-            cursor = db.execute('SELECT * FROM diary_entries where author = ?', [a['name']])
+            cursor = db.execute('SELECT * FROM diary_entries where author = ? order by publish_date desc', [a['name']])
             a = cursor.fetchall()
             return make_json_response(a, True)
         else:
