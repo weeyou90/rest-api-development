@@ -347,7 +347,7 @@ def diary_create():
     #insert diary entry
     cursor = db.execute('select * from users where token = (?)', [token])  
     a = cursor.fetchone()
-    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (null,?,?,?,?,?)', [title, a["name"], datetime.now() , public, text])
+    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, a["name"], datetime.now() , public, text])
     db.commit()
     db.close()
 
@@ -373,7 +373,7 @@ def diary_delete():
 
     cursor = db.execute('select * from users where token = (?)', [token])  
     a = cursor.fetchone() 
-    cursor = db.execute('delete from diary_entries where public = ? and author = ?',[diary_id, a['name']])
+    cursor = db.execute('delete from diary_entries where id = ? and author = ?',[diary_id, a['name']])
     db.commit()
     
     if ( cursor.rowcount == 1): #if delete successful
@@ -401,7 +401,7 @@ def diary_permissions():
     cursor = db.execute('select * from users where token = (?)', [token])  
     a = cursor.fetchone() 
   
-    cursor = db.execute('update diary_entries set public = ? where public = ? and author = ?',[public, diary_id, a['name']])
+    cursor = db.execute('update diary_entries set public = ? where id = ? and author = ?',[public, diary_id, a['name']])
     db.commit()
     
     if ( cursor.rowcount == 1): #if update successful

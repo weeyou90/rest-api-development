@@ -27,10 +27,7 @@ function userIsLoggedIn(){
                 data : JSON.stringify({token:getCookie("token")}),
                 contentType: "application/json",
                 success : function(result) {
-
-                    console.log(result.status);
-
-
+		
                     if (result.status == true)
 
                     {
@@ -58,7 +55,46 @@ document.getElementById("userNavLeft").innerHTML = '<a href="./privateDiary.html
 
 
 $(document).ready(function(){
-         // click on button submit
+	
+	$("#user_expire").on('click', function(e){
+		token = getCookie("token")
+		tokendata = JSON.stringify({token:token})
+		console.log("logout"+token)
+		e.preventDefault();
+		e.returnValue = false;
+		// send ajax
+            $.ajax({
+                url: 'http://localhost:8080/users/expire', // url where to submit the request
+                type : "POST", // type of action POST || GET
+                dataType : 'json', // data type
+                data : tokendata,
+                contentType: "application/json",
+                success : function(data) {
+
+                    console.log(data);
+
+                    if (data.status == true)
+                    {
+                        // redirect to the index page
+                      alert("Successfully logged out");
+                      window.location.href= "index.html";
+                    }
+                    else if (data.status == false)
+                    {
+                         // have some issues, need to fix
+                      alert("Already logged out");
+                      window.location.href = "index.html";
+                    }
+
+                },
+                error: function(xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                }
+            })
+	});
+
+
+         // click on login button
         $("#login").on('click', function(e){
 
           e.preventDefault();
@@ -91,10 +127,10 @@ $(document).ready(function(){
 
                     if (result.status == true)
                     {
+			
+                        setCookie("token", result.result.token)                      
+                        alert("cookie"+getCookie("token"))
                         alert("Login Successful!")
-                        setCookie("token", result.result.token)
-                        
-                        console.log("cookie"+getCookie("token"))
                         $(location).attr('href', 'http://localhost/index.html')
         
         }
@@ -139,43 +175,3 @@ function getuser() {
 
 }
 
-$(document).ready(function(){
-
-	$("#user_expire").on('click', function(e){
-		token = getCookie("token")
-		tokendata = JSON.stringify({token:token})
-		console.log("logout"+token)
-		e.preventDefault();
-		e.returnValue = false;
-		// send ajax
-            $.ajax({
-                url: 'http://localhost:8080/users/expire', // url where to submit the request
-                type : "POST", // type of action POST || GET
-                dataType : 'json', // data type
-                data : tokendata,
-                contentType: "application/json",
-                success : function(data) {
-
-                    console.log(data);
-
-                    if (data.status == true)
-                    {
-                        // redirect to the index page
-                      alert("Successfully logged out");
-                      window.location.href= "index.html";
-                    }
-                    else if (data.status == false)
-                    {
-                         // have some issues, need to fix
-                      alert("Already logged out");
-                      window.location.href = "index.html";
-                    }
-
-                },
-                error: function(xhr, resp, text) {
-                    console.log(xhr, resp, text);
-                }
-            })
-	});
-
-});
