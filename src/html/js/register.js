@@ -45,8 +45,8 @@ $(document).ready(function(){
                     else if (data.status == false)
                     {
                          // have some issues, need to fix
-                      alert("User already exists!");
-                      window.location= "./login.html";
+                      alert("Error");
+                      window.location= "./register.html";
                     }
 
                 },
