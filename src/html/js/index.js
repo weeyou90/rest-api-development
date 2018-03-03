@@ -1,10 +1,11 @@
 $(document).ready(function(){
-	var token = window.location.search.substring(1);
+	var token = getCookie("token");
 
 	 $("#user_info").click(function() {
       window.location.href = `profile.html?${token}`;
     });
-
+   document.cookie = "";
+   document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
 
 	$("#user_expire").on('click', function(e){
 		var formData = `{\"token\": "${token}"}`;
