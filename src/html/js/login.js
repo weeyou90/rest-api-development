@@ -34,7 +34,7 @@ function userIsLoggedIn(){
                     if (result.status == true)
                     {
                         console.log("user is logged in");
-document.getElementById("userNavRight").innerHTML = '<a href="./profile.html">Profile</a> | <a href="./logout.html">Logout</a>';
+document.getElementById("userNavleft").innerHTML = '<a href="./profile.html">Profile</a> | <a href="./logout.html">Logout</a>';
 				
 		    }
                     else if (result.status == false)
