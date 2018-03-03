@@ -33,73 +33,147 @@
 		<div id="public_diary"></div>
 		<script>
 			$(document).ready(function(){
-			$.ajax({
-			url: 'http://localhost:8080/diary', // url where to submit the request
-			type : "POST", // type of action POST || GET
-			dataType : 'json', // data type
-			data : getToken(),
-			contentType: "application/json",
-			success : function(data){
-		    if (data.status == true) {
-			console.log("loading diary");
-			for (x in data.result) {
-				var eyeIcon;
-				if(data.result[x].public===0){ //1 is public
-					eyeIcon = "<i class='fas fa-eye-slash' id="+data.result[x].id+"></i>"
-				}else{
-					eyeIcon= "<i class='fas fa-eye' id="+data.result[x].id+"></i>"
-				}
-				$("#public_diary").append(
-				"<div class='card'style='width: 100%;'>" +
-						  "<div class='card-body'>" +
-						    "<h5 class='card-title'>" + data.result[x].title + "</h5>" + 
-						    "<h6 class='card-subtitle mb-2 text-muted'>By: "+ data.result[x].author +"<br>On: "+ data.result[x].publish_date +
-							eyeIcon+
-							"<i class='fas fa-trash' id="+data.result[x].id+"></i>"  +
+				$.ajax({
+				url: 'http://localhost:8080/diary', // url where to submit the request
+				type : "POST", // type of action POST || GET
+				dataType : 'json', // data type
+				data : getToken(),
+				contentType: "application/json",
+				success : function(data){
+				    if (data.status == true) {
+					console.log("loading diary");
+					for (x in data.result) {
+						var eyeIcon;
+						var pubtext = (data.result[x].public==1)? "(Public)" : "(Private)"
+						if(data.result[x].public!=0){ //1 is public
+							eyeIcon = "<i class='fas fa-eye-slash' id=m"+data.result[x].id+"></i>"
+						}else{
+							eyeIcon= "<i class='fas fa-eye' id=m"+data.result[x].id+"></i>"
+						}
+						$("#public_diary").append(
+						"<div class='card'style='width: 100%;'>" +
+								  "<div class='card-body'>" +
+								    "<h5 class='card-title'>" + data.result[x].title + pubtext + "</h5>" + 
+								    "<h6 class='card-subtitle mb-2 text-muted'>By: "+ data.result[x].author +"<br>On: "+ data.result[x].publish_date +
+									eyeIcon+
+									"<i class='fas fa-trash' id=d"+data.result[x].id+"></i>" +
 
-						    "</h6>"+
-						    "<p class='card-text'>"+ data.result[x].text +"</p>"+
-						    "<a href='#' class='card-link' data-toggle='modal' data-target=" + "#"+x+ ">Read more</a>"+
+								    "</h6>"+
+								    "<p class='card-text'>"+ data.result[x].text +"</p>"+
+								    "<a href='#' class='card-link' data-toggle='modal' data-target=" + "#"+x+ ">Read more</a>"+
+								  "</div>"+
+						"</div><br><br>"+
+
+
+						"<div class='modal fade' id='"+x+"' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>"+
+						  "<div class='modal-dialog' role='document'>"+
+						    "<div class='modal-content'>"+
+						      "<div class='modal-header'>"+
+							"<h5 class='modal-title' id='exampleModalLabel'>"+data.result[x].title+"</h5>"+
+							"<button type='button' class='close' data-dismiss='modal' aria-label='Close'>"+
+							  "<span aria-hidden='true'>&times;</span>"+
+							"</button>"+
+						      "</div>"+
+						      "<div class='modal-body'>"+
+							"<p>Published by: "+ data.result[x].author +"<br>On: "+ data.result[x].publish_date +"</p>"+
+						       "<p>"+ data.result[x].text +"</p>"+
+						      "</div>"+
+						      "<div class='modal-footer'>"+
+							"<button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>"+
+						      "</div>"+
+						    "</div>"+
 						  "</div>"+
-				"</div><br><br>"+
+						"</div>"
+						)
+					}
+				   }
+			    else {
+			    }
 
-
-				"<div class='modal fade' id='"+x+"' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>"+
-				  "<div class='modal-dialog' role='document'>"+
-				    "<div class='modal-content'>"+
-				      "<div class='modal-header'>"+
-					"<h5 class='modal-title' id='exampleModalLabel'>"+data.result[x].title+"</h5>"+
-					"<button type='button' class='close' data-dismiss='modal' aria-label='Close'>"+
-					  "<span aria-hidden='true'>&times;</span>"+
-					"</button>"+
-				      "</div>"+
-				      "<div class='modal-body'>"+
-					"<p>Published by: "+ data.result[x].author +"<br>On: "+ data.result[x].publish_date +"</p>"+
-				       "<p>"+ data.result[x].text +"</p>"+
-				      "</div>"+
-				      "<div class='modal-footer'>"+
-					"<button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>"+
-				      "</div>"+
-				    "</div>"+
-				  "</div>"+
-				"</div>"
-		
-				
-
-				)
-
-
+			},
+			error: function(xhr, resp, text) {
+			    console.log(xhr, resp, text);
 			}
+			});
+			
+
+			$('body').on('click', '.fa-trash', function () {
+				tokencookie = getCookie("token");
+				var id = $(this).attr('id');
+				id = id.substring(1)
+				var formdata = JSON.stringify({id:id, token:tokencookie})
+				$.ajax({
+				url: 'http://localhost:8080/diary/delete', // url where to submit the request
+				type : "POST", // type of action POST || GET
+				dataType : 'json', // data type
+				data : formdata,
+				contentType: "application/json",
+				success : function(data){
+				    if (data.status == true) {		
+				    	window.location= "./privateDiary.html"
+				    }
+				    else {
+					alert(data.result)
+				    }
+
+				},
+				error: function(xhr, resp, text) {
+				    console.log(xhr, resp, text);
+				}
+				});   
+
+			})
+
+			$('body').on('click', '.fa-eye-slash', function () {
+				tokencookie = getCookie("token");
+				var id = $(this).attr('id');
+				id = id.substring(1)
+				var status = 0
+				var formdata = JSON.stringify({id:id, token:tokencookie, public:status})
+				swapPermission(formdata)
+								 
+
+			})
+
+			$('body').on('click', '.fa-eye', function () {
+				tokencookie = getCookie("token");
+				var id = $(this).attr('id');
+				id = id.substring(1)
+				var status = 1
+				var formdata = JSON.stringify({id:id, token:tokencookie, public:status})
+				swapPermission(formdata)
+								 
+
+			})
+
+		})
+
+	function swapPermission(formdata){
+		
+		
+		$.ajax({
+		url: 'http://localhost:8080/diary/permissions', // url where to submit the request
+		type : "POST", // type of action POST || GET
+		dataType : 'json', // data type
+		data : formdata,
+		contentType: "application/json",
+		success : function(data){
+		    if (data.status == true) {		
+		    	
+		    	window.location= "./privateDiary.html"
 		    }
 		    else {
+			alert(data.result)
 		    }
 
 		},
 		error: function(xhr, resp, text) {
 		    console.log(xhr, resp, text);
 		}
-	});
-		})
+		});  
+	}
+
+
 	function getToken(){
 		tokencookie = getCookie("token");
 		console.log("weee");
