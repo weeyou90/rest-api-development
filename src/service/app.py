@@ -219,6 +219,7 @@ def users_authenticate():
         cursor = db.execute('UPDATE users SET token = ? WHERE name = ?', [token, username])
         db.commit()
         db.close()
+    
         #if token issued successfully
         if ( cursor.rowcount == 1):
             a = {}
@@ -263,7 +264,7 @@ def users():
         data = request.get_json()
         token = data['token']
     except:
-        #print request.data
+        # print request.data
         return make_json_response("Invalid inputs",False)
 
     #check is logged in 

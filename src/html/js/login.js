@@ -24,7 +24,7 @@ function userIsLoggedIn(){
                 url: 'http://localhost:8080/users', // url where to submit the request
                 type : "POST", // type of action POST || GET
                 dataType : 'json', // data type
-                data : '{token:"' +getCookie("token") + '"}',
+                data : JSON.stringify({token:getCookie("token")}),
                 contentType: "application/json",
                 success : function(result) {
 
@@ -32,9 +32,11 @@ function userIsLoggedIn(){
 
 
                     if (result.status == true)
+
                     {
                         console.log("user is logged in");
 document.getElementById("userNavRight").innerHTML = '<a href="./profile.html">Profile</a> | <a href="./logout.html">Logout</a>';
+document.getElementById("userNavLeft").innerHTML = '<a href="./privateDiary.html">Read My Diary Entries</a>';
 				
 		    }
                     else if (result.status == false)
@@ -106,10 +108,11 @@ $(document).ready(function(){
                     if (result.status == true)
                     {
                         alert("Login Successful!")
-      console.log(result.result.token)
-      setCookie("token", result.result.token)
-      console.log("cookie"+getCookie("token"))
-      $(location).attr('href', 'http://localhost/index.html')
+                        console.log(result.result.token)
+                        setCookie("token", result.result.token)
+                        alert(result.result.token);
+                        console.log("cookie"+getCookie("token"))
+                        $(location).attr('href', 'http://localhost/index.html')
         
         }
                     else if (result.status == false)
