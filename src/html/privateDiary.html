@@ -1,6 +1,7 @@
 <html>
    <head>
       <link href="./css/bootstrap.min.css" rel="stylesheet">
+       <link href="./css/privateDiary.css" rel="stylesheet">
       <link href="./css/stylesheet.css" rel="stylesheet">
       <link rel="stylesheet" href="../css/bootstrap.min.css">
          <script src="./js/demo.js"></script>
@@ -46,9 +47,9 @@
 						var eyeIcon;
 						var pubtext = (data.result[x].public==1)? "(Public)" : "(Private)"
 						if(data.result[x].public!=0){ //1 is public
-							eyeIcon = "<i class='fas fa-eye-slash' id=m"+data.result[x].id+"></i>"
+							eyeIcon = "<i class='fas fa-eye-slash canClick' id=m"+data.result[x].id+"></i>"
 						}else{
-							eyeIcon= "<i class='fas fa-eye' id=m"+data.result[x].id+"></i>"
+							eyeIcon= "<i class='fas fa-eye canClick' id=m"+data.result[x].id+"></i>"
 						}
 						$("#public_diary").append(
 						"<div class='card'style='width: 100%;'>" +
@@ -56,7 +57,7 @@
 								    "<h5 class='card-title'>" + data.result[x].title + pubtext + "</h5>" + 
 								    "<h6 class='card-subtitle mb-2 text-muted'>By: "+ data.result[x].author +"<br>On: "+ data.result[x].publish_date +
 									eyeIcon+
-									"<i class='fas fa-trash' id=d"+data.result[x].id+"></i>" +
+									"<i class='fas fa-trash canClick' id=d"+data.result[x].id+"></i>" +
 
 								    "</h6>"+
 								    "<p class='card-text'>"+ data.result[x].text +"</p>"+
