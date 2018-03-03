@@ -54,7 +54,7 @@
           var pub = $("input[name='privacy']:checked").val()
           var text = $("#text").val()
           tokencookie = getCookie("token");
-          alert(tokencookie);
+          
           $.ajax({
             url: 'http://localhost:8080/diary/create', // url where to submit the request
             type : "POST", // type of action POST || GET
@@ -67,7 +67,7 @@
                 if (data.status == true)
                 {
                   alert("Post created!");
-              window.location= "./diary.html"
+              window.location= "./privateDiary.html"
                 }
                 else
                 {
