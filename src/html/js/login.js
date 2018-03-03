@@ -73,7 +73,7 @@ function loadDiary(){
 }
 $(document).ready(function(){
          // click on button submit
-        $("#submit").on('click', function(e){
+        $("#login").on('click', function(e){
 
           e.preventDefault();
           e.returnValue = false;
