@@ -36,7 +36,7 @@ function userIsLoggedIn(){
                     {
                         console.log("user is logged in");
 document.getElementById("userNavRight").innerHTML = '<a href="./profile.html">Profile</a> | <a href="./logout.html">Logout</a>';
-document.getElementById("userNavLeft").innerHTML = '<a href="./privateDiary.html">Read My Diary Entries</a>';
+document.getElementById("userNavLeft").innerHTML = '<a href="./privateDiary.html">Read My Diary Entries</a> | <a href="./createPost.html">Create Entries</a>';
 				
 		    }
                     else if (result.status == false)
