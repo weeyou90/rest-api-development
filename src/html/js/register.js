@@ -20,7 +20,7 @@ window.alert = function(msg){
 
 $(document).ready(function(){
          // click on button submit
-        $("#submit").on('click', function(e){
+        $("#submitRegister").on('click', function(e){
 
           e.preventDefault();
           e.returnValue = false;
