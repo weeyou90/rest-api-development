@@ -4,13 +4,13 @@
 	<meta charset="utf-8">
  	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<link rel="stylesheet" href="./css/stylesheet.css">
-  <script src="./userState.js"></script>
   <script src="./js/jquery-3.3.1.min.js"></script>
         <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/login.js"></script>
 
 </head>
 
-<body onload="userIsLoggedIn();">
+<body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
   			<a class="navbar-brand" href="./index.html">My Secret Diary</a>
   			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,96 +31,44 @@
   		<div class="jumbotron">
     		<h1>Profile</h1>      
     		<p>See your information here</p>
+        Name: <span id="user"></span><br>
+        Fullname: <span id="fullname"></span><br>
+        Age: <span id="age"></span><br>
   		</div>
 	</div>
 
 	<div class="container">
 		<div id="profile"></div>
 	</div>
-   <table class="table" id="mytable">
-<thead>
-<tr>
-  <th>Name</th>
-  <th>Fullname</th>
-  <th>Age</th>
-</tr>
-</thead>
-</table>
-        
-       
+
 	<script type="text/javascript">
-  var token = window.location.search.substring(1);
-  var formData = `{\"token\": "${token}"}`;
+   $(document).ready(function(){
+  tokencookie = getCookie("token");
+  console.log(tokencookie);
+  console.log(document.cookie);
+  tokendata = JSON.stringify({token:tokencookie});
   $.ajax({
-        url: 'http://localhost:8080/users', // url where to submit the request
-        type : "POST", // type of action POST || GET
-        dataType : 'json', // data type
-        data : formData,
-        contentType: "application/json",
-        success : function(data) {
-
-            console.log(data);
-            var trHTML = '';
-            // $.each(response, function(i, item){
-            //   trHTML +='<tr><td>' + item.name + '</td><td>' + item.fullname +'</td><td>'+item.age+'</td></tr>'; });
-            // $("#mytable").append(trHTML);
-            // });
-
-            if (data.status)
-            {
-              for (var i = 0; i< data.result.length; i++){
-                var row = $('<tr><td>'+data.result[i].name +'</td><td>'+data.result[i].fullname+'</td><td>'+data.result[i].age+'</td></tr>');
-                $('#mytable').append(row);
-              }
-            }
-            else
-            {
-                 // have some issues, need to fix
-              alert("Invalid token");
-              window.location.href = "index.html";
-            }
-
+    url: 'http://localhost:8080/users', // url where to submit the request
+    type : "POST", // type of action POST || GET
+    dataType : 'json', // data type
+    data : tokendata,
+    contentType: "application/json",
+    success : function(data){
+        if (data.status == true) {    
+      $("#user").append(data.result.name)
+      $("#fullname").append(data.result.fullname)
+      $("#age").append(data.result.age)
         }
-    })
-
-   $("#user_info").click(function() {
-      window.location.href = `profile.html?${token}`;
-    });
-
-
-  $("#user_expire").on('click', function(e){
-    e.preventDefault();
-    e.returnValue = false;
-    // send ajax
-    $.ajax({
-        url: 'http://localhost:8080/users/expire', // url where to submit the request
-        type : "POST", // type of action POST || GET
-        dataType : 'json', // data type
-        data : formData,
-        contentType: "application/json",
-        success : function(data) {
-
-            console.log(data);
-
-            if (data.status == true)
-            {
-                // redirect to the index page
-              alert("Successfully logged out");
-              window.location.href= "index.html";
-            }
-            else if (data.status == false)
-            {
-                 // have some issues, need to fix
-              alert("Already logged out");
-              window.location.href = "index.html";
-            }
-
-        },
-        error: function(xhr, resp, text) {
-            console.log(xhr, resp, text);
+        else {
+        window.location= "/";
         }
-    })
+    },
+    error: function(xhr, resp, text) {
+        console.log(xhr, resp, text);
+    }
   });
+});
+
 	</script>
 		<script src="./js/login.js"></script>
     </div>
