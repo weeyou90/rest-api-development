@@ -108,9 +108,8 @@ $(document).ready(function(){
                     if (result.status == true)
                     {
                         alert("Login Successful!")
-                        console.log(result.result.token)
                         setCookie("token", result.result.token)
-                        alert(result.result.token);
+                        
                         console.log("cookie"+getCookie("token"))
                         $(location).attr('href', 'http://localhost/index.html')
         

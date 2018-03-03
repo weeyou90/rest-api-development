@@ -31,6 +31,7 @@
 	<div id="publicPosts">
 		<div id="public_diary"></div>
 		<script>
+			$(document).ready(function(){
 			$.ajax({
 			url: 'http://localhost:8080/diary', // url where to submit the request
 			type : "POST", // type of action POST || GET
@@ -91,10 +92,13 @@
 		    console.log(xhr, resp, text);
 		}
 	});
+		})
 	function getToken(){
 		tokencookie = getCookie("token");
-		tokendata = JSON.stringify({token:tokencookie});
 		console.log("weee");
+		console.log(tokencookie);
+		tokendata = JSON.stringify({token:tokencookie});
+		
 		return tokendata;
 	}
 
