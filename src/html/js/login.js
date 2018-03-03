@@ -1,8 +1,8 @@
-function setCookie(c_name, value, exdays) {
-    var exdate = new Date();
-    exdate.setDate(exdate.getDate() + exdays);
-    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
-    document.cookie = c_name + "=" + c_value;
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
 function getCookie(c_name) {
@@ -18,7 +18,6 @@ function getCookie(c_name) {
 };
 
 function userIsLoggedIn(){
-	
 	// send ajax
             $.ajax({
                 url: 'http://localhost:8080/users', // url where to submit the request
@@ -128,8 +127,7 @@ $(document).ready(function(){
                     if (result.status == true)
                     {
 			
-                        setCookie("token", result.result.token)                      
-                        alert("cookie"+getCookie("token"))
+                        setCookie("token", result.result.token, 1) 
                         alert("Login Successful!")
                         $(location).attr('href', 'http://localhost/index.html')
         

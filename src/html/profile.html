@@ -44,9 +44,8 @@
 
 	<script type="text/javascript">
    $(document).ready(function(){
+  
   tokencookie = getCookie("token");
-  console.log(tokencookie);
-  console.log(document.cookie);
   tokendata = JSON.stringify({token:tokencookie});
   $.ajax({
     url: 'http://localhost:8080/users', // url where to submit the request
@@ -71,7 +70,6 @@
 });
 
 	</script>
-		<script src="./js/login.js"></script>
     </div>
 </body>
 </html>
