@@ -54,9 +54,12 @@ Session ID might be stolen, as such if possible we would like to tie the session
 #### Question 3: Are there any improvements you would make to the API specification to improve the security of the web application?
 
 
+
 #### Question 4: Are there any additional features you would like to highlight?
 
-Answer: Please replace this sentence with your answer.
+1) We provide a friendly way to show the diary page, `read more` has a card window to display this diary. modify diary permission and delete personal diaries. Inside `Read My Diary Entries`, we can switch the permission between `pulic` and `private` through `eye` icon, and delete the page from `delete` icon.
+
+2) 
 
 #### Question 5: Is your web application vulnerable? If yes, how and why? If not, what measures did you take to secure it?
 
@@ -78,7 +81,7 @@ Yes, the web application is vulnerable.
 
 
 #### Feedback: Is there any other feedback you would like to give?
-
+Team work is important, we can cooperate together based on everyone's strength.
 
 ### Declaration
 

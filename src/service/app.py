@@ -347,7 +347,7 @@ def diary_create():
     #insert diary entry
     cursor = db.execute('select * from users where token = (?)', [token])  
     a = cursor.fetchone()
-    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, a["name"], datetime.now() , public, text])
+    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, a["name"], datetime.now().strftime('%Y %b-%d %H:%m:%S') , public, text])
     db.commit()
     db.close()
 
