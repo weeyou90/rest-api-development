@@ -40,6 +40,10 @@ Yes. However, given that it is not part of the requirements, we have not impleme
 Sanitization of inputs should be implemented so that user cannot conduct injection attacks such as SQL-Injection and XSS. For example, without sanitisation, user can write a simple script in a public entry
 
 Password protection considerations such as limiting the number of login attempts, password checkers to check for weak passwords. 
+
+Enforcing same origin policy to prevent 
+
+Looked into the possibility of using prepared statements to prevent SQL injection by only allowing specified queries to run. 
  
 #### Question 3: Are there any improvements you would make to the API specification to improve the security of the web application?
 
@@ -53,9 +57,13 @@ Answer: Please replace this sentence with your answer.
 Answer: Please replace this sentence with your answer.
 
 Yes, the web application is vulnerable. 
-1) There is a chance of leaked session ID. Hence to be more defensive, We store session data such as token on the server side in our Users table. Every login, we will generate a new token and this token will be tagged to the current user for the particular session.
+1) There is a chance of leaked session ID. Hence to be more defensive, We store session data such as token on the server side in our Users table. Every login, we will generate a new token and this token will be tagged to the current user for the particular session. For every re-login, we will generate a new token.
+ 
+2) There is a chance of XSS attack. In our create diary entry page, we placed a script within the Text field such as "<Script>Alert('hello')</ Script>" and we created the diary post, the script was also run.  One possible measure is to do a sanity check on what are the inputs being passed from the user to ensure that there are no scripts. Enabling content security policy might help by using a HTTP header to provide a whitelist of sources of trusted content and allow rendering of resources from these sources. In addition there is a possibility of token being stolen due to XSS attacks.
 
-2) 
+3) There is a possibility of CSRF attack where the attacker send a forged request on behalf of the victim. In the case of the diary application, a possibile scenario would be the attacker send a request to see the victim's private diary requests or do a public post on behalf of the victim. To increase defense against this, we can do a HTTP referrer validation. By checking the header, we will be able to see if the request is from the same site or cross site, giving the server a better understanding of which site is making the request. 
+
+
 
 
 
