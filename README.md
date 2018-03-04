@@ -41,9 +41,15 @@ Sanitization of inputs should be implemented so that user cannot conduct injecti
 
 Password protection considerations such as limiting the number of login attempts, password checkers to check for weak passwords. 
 
-Enforcing same origin policy to prevent 
+Enforcing same origin policy to prevent script from another page to obatain data from the current page.
 
 Looked into the possibility of using prepared statements to prevent SQL injection by only allowing specified queries to run. 
+
+Filtering all calls to the api first by checking if they are currently login, this will create another layer of barrier from the front end.
+
+Implement web certificates so that users can trust that they are heading to the correct site.
+
+Session ID might be stolen, as such if possible we would like to tie the session id to the source IP adress and user agent as well. 
  
 #### Question 3: Are there any improvements you would make to the API specification to improve the security of the web application?
 
@@ -63,19 +69,16 @@ Yes, the web application is vulnerable.
 
 3) There is a possibility of CSRF attack where the attacker send a forged request on behalf of the victim. In the case of the diary application, a possibile scenario would be the attacker send a request to see the victim's private diary requests or do a public post on behalf of the victim. To increase defense against this, we can do a HTTP referrer validation. By checking the header, we will be able to see if the request is from the same site or cross site, giving the server a better understanding of which site is making the request. 
 
+4) The current application is also susceptible to eavesdropping, as such we can implement HTTPS to prevent man in the middle attack.
 
+5) Prone to DOS attack, we can implement some services at to hold any request from the particlar IP if there is an unusual amount of request from them.
 
-
-
-
-
-
+6) Brute force attack, we should deny the user from logging in if they have key in more than 3 times of wrong password combination.
 
 
 
 #### Feedback: Is there any other feedback you would like to give?
 
-Answer: Please replace this sentence with your answer.
 
 ### Declaration
 
@@ -90,31 +93,3 @@ Answer: Please replace this sentence with your answer.
 4. ZHOU Zhi Zhong
     - Implemented z
 
-
-
-/* Actual Document Starts Here*/
-
-Database Schema
-
-Table
-users {
-  username: varchar (255) not null,
-  fullname: varchar (255) not null,
-  salt: varchar (255) not null,
-  hashed_password: varchar (255) not null,
-  age: int not null
-}
-
-diary_entries {
-  id: int primary key auto increment, 
-  title: varchar (255) not null,
-  author: varchar (255) not null,
-  publish_date: datetime not null, 
-  public: boolean not null, 
-  text: text
-
-}
-
-members {
-  name: varchar (255) not null
-}
