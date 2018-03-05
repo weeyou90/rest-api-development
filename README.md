@@ -2,18 +2,6 @@
 
 CS5331 Assignment 1 Project Reference Repository
 
-# Screenshots
-
-![Create Diary](./img/Create_diary.png)
-![Login Page](./img/login.png)
-![Personal Diary Entries](./img/Personal_diary.png)
-![Profile Page](./img/Profile.png)
-![Signup Page](./img/signup.png)
-![Public Diary Enntries](./img/Public_diary.png)
-
-## Administration and Evaluation
-
-
 ### Team Members
 
 1. LAU Wee You
@@ -90,4 +78,16 @@ Yes, the web application is vulnerable.
     - Front-end design and implementation, Database Design
 4. ZHOU Zhi Zhong
     - Linking front-end and back-end (users), back-end (users)
+
+
+### Screenshots
+
+![Create Diary](./img/Create_diary.png)
+*************
+![Personal Diary Entries](./img/Personal_diary.png)
+*************
+![Profile Page](./img/Profile.png)
+*************
+![Public Diary Enntries](./img/Public_diary.png)
+*************
 
