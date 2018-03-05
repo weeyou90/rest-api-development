@@ -242,7 +242,6 @@ def users_expire():
     if token == 0:
         return make_json_response(None,False) 
     
-    print(token)
     #expire a token
     db=get_db()
     cursor = db.execute('UPDATE users SET token = ? WHERE token = ?', [0, token])
@@ -335,7 +334,7 @@ def diary_create():
 
     #authenticate
     if not (is_logged_in(token)):
-        return make_json_response("Invalid authentication token",False)
+        return make_json_response("Invalid authentication token.",False)
     
     db=get_db()
     cursor = db.execute('SELECT id FROM diary_entries where id = (select max(id) from diary_entries)')  
@@ -350,7 +349,8 @@ def diary_create():
     db.commit()
     db.close()
 
-    return make_json_response(diary_id,True,201)
+    a = {'id': diary_id}
+    return make_json_response(a,True,201)
 
 @app.route("/diary/delete", methods=['POST'])
 def diary_delete():
@@ -365,7 +365,7 @@ def diary_delete():
         return make_json_response("Invalid inputs",False)
 
     if not (is_logged_in(token)):
-        return make_json_response("Invalid authentication token",False)
+        return make_json_response("Invalid authentication token.",False)
     
     #code to delete diary
     db=get_db()
@@ -392,7 +392,7 @@ def diary_permissions():
         return make_json_response("Invalid inputs",False)
 
     if not (is_logged_in(token)):
-        return make_json_response("Invalid authentication token",False)
+        return make_json_response("Invalid authentication token.",False)
 
     #code to update diary owned by user
     db=get_db()
