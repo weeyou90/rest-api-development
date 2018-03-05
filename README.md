@@ -85,18 +85,18 @@ Yes, the web application is vulnerable.
 
 
 #### Feedback: Is there any other feedback you would like to give?
-Team work is important, we can cooperate together based on everyone's strength.
+- Assignment could have been more security focused (For example, given a existing secret diary, implement XXX security features).
 
 ### Declaration
 
 #### Please declare your individual contributions to the assignment:
 
 1. LAU Wee You
-    - Implemented z
+    - Docker requirements, implementing database, skeleton codes, debugging
 2. LEE Zi Shan
-    - Implemented z
+    - Linking front-end and back-end (diary), back-end (diary)
 3. SIA Wei Kiat Jason
-    - Implemented z
+    - Front-end, Database Design
 4. ZHOU Zhi Zhong
-    - Implemented z
+    - Linking front-end and back-end (users), back-end (users)
 
