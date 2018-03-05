@@ -130,7 +130,7 @@
 				tokencookie = getCookie("token");
 				var id = $(this).attr('id');	
 				id = id.substring(1)
-				var status = 0
+				var status = false
 				var formdata = JSON.stringify({id:id, token:tokencookie, public:status})
 				swapPermission(formdata)
 								 
@@ -141,7 +141,7 @@
 				tokencookie = getCookie("token");
 				var id = $(this).attr('id');
 				id = id.substring(1)
-				var status = 1
+				var status = true
 				var formdata = JSON.stringify({id:id, token:tokencookie, public:status})
 				swapPermission(formdata)
 								 

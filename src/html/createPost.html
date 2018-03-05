@@ -51,6 +51,7 @@
           console.log('create button clicked')
           var title = $("#title").val()
           var pub = $("input[name='privacy']:checked").val()
+	  pub = pub==1? true:false
           var text = $("#text").val()
           tokencookie = getCookie("token");
           

@@ -103,7 +103,6 @@ def is_logged_in(token):
     print("token is" + token)
     if token == "0":
         return False;    
-    print(token)
 
     db = get_db()
     cursor = db.execute('SELECT * from users where token = ?',[token])
@@ -293,7 +292,10 @@ def diary():
     if request.method == 'GET':
         cursor = db.execute('SELECT * FROM diary_entries where public = 1 order by publish_date desc')  
         a = cursor.fetchall()
-        return make_json_response(a)
+        for entries in a:
+	    entries['public'] = True if entries['public']==1 else False
+	    
+	return make_json_response(a)
 
     if request.method == 'POST':
         try:
@@ -311,7 +313,9 @@ def diary():
             #get diaries based on username
             cursor = db.execute('SELECT * FROM diary_entries where author = ? order by publish_date desc', [a['name']])
             a = cursor.fetchall()
-            return make_json_response(a, True)
+	    for entries in a:
+	            entries['public'] = True if entries['public']==1 else False
+	    return make_json_response(a, True)
         else:
             return make_json_response("Invalid authentication token.",False)
  
@@ -341,11 +345,11 @@ def diary_create():
     a = cursor.fetchone()
     #set id as maxid+1
     diary_id = 1 if not a else 1 + int(a['id'])
-
+    savedpublic = 1 if public == True else 0
     #insert diary entry
     cursor = db.execute('select * from users where token = (?)', [token])  
     a = cursor.fetchone()
-    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, a["name"], datetime.now().strftime('%Y %b-%d %H:%m:%S') , public, text])
+    db.execute('insert into diary_entries (id,title,author,publish_date,public,text) values (?,?,?,?,?,?)', [diary_id, title, a["name"], datetime.now().strftime('%Y %b-%d %H:%m:%S') , savedpublic, text])
     db.commit()
     db.close()
 
@@ -400,7 +404,9 @@ def diary_permissions():
     cursor = db.execute('select * from users where token = (?)', [token])  
     a = cursor.fetchone() 
   
-    cursor = db.execute('update diary_entries set public = ? where id = ? and author = ?',[public, diary_id, a['name']])
+    print public == True
+    savedPublic = 1 if public==True else 0
+    cursor = db.execute('update diary_entries set public = ? where id = ? and author = ?',[savedPublic, diary_id, a['name']])
     db.commit()
     
     if ( cursor.rowcount == 1): #if update successful
