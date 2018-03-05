@@ -11,7 +11,12 @@ specified here: https://cs5331-assignments.github.io/rest-api-development/.
 Please replace the example screenshots with screenshots of your completed
 project. Feel free to include more than one.
 
-![Sample Screenshot](./img/samplescreenshot.png)
+![Create Diary](./img/Create_diary.png)
+![Login Page](./img/login.png)
+![Personal Diary Entries](./img/Personal_diary.png)
+![Profile Page](./img/Profile.png)
+![Signup Page](./img/signup.png)
+![Public Diary Enntries](./img/Public_diary.png)
 
 ## Administration and Evaluation
 
@@ -53,17 +58,16 @@ Session ID might be stolen, as such if possible we would like to tie the session
  
 #### Question 3: Are there any improvements you would make to the API specification to improve the security of the web application?
 
-
+Use port 80 for both backend and front end so that CORS can be disabled.
 
 #### Question 4: Are there any additional features you would like to highlight?
 
-1) We provide a friendly way to show the diary page, `read more` has a card window to display this diary. modify diary permission and delete personal diaries. Inside `Read My Diary Entries`, we can switch the permission between `pulic` and `private` through `eye` icon, and delete the page from `delete` icon.
+1) We provide a friendly way to show the diary page, `read more` has a card window to display this diary. modify diary permission and delete personal diaries. Inside `Read My Diary Entries`, we can switch the permission between `public` and `private` through `eye` icon, and delete the page from `delete` icon.
 
 2) 
 
 #### Question 5: Is your web application vulnerable? If yes, how and why? If not, what measures did you take to secure it?
 
-Answer: Please replace this sentence with your answer.
 
 Yes, the web application is vulnerable. 
 1) There is a chance of leaked session ID. Hence to be more defensive, We store session data such as token on the server side in our Users table. Every login, we will generate a new token and this token will be tagged to the current user for the particular session. For every re-login, we will generate a new token.
