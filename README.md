@@ -2,14 +2,7 @@
 
 CS5331 Assignment 1 Project Reference Repository
 
-## Instructions
-
-Your objective is to implement a web application that provides the endpoints
-specified here: https://cs5331-assignments.github.io/rest-api-development/.
 # Screenshots
-
-Please replace the example screenshots with screenshots of your completed
-project. Feel free to include more than one.
 
 ![Create Diary](./img/Create_diary.png)
 ![Login Page](./img/login.png)
@@ -20,7 +13,6 @@ project. Feel free to include more than one.
 
 ## Administration and Evaluation
 
-Please fill out this section with details relevant to your team.
 
 ### Team Members
 
@@ -64,7 +56,6 @@ Use port 80 for both backend and front end so that CORS can be disabled.
 
 1) We provide a friendly way to show the diary page, `read more` has a card window to display this diary. modify diary permission and delete personal diaries. Inside `Read My Diary Entries`, we can switch the permission between `public` and `private` through `eye` icon, and delete the page from `delete` icon.
 
-2) 
 
 #### Question 5: Is your web application vulnerable? If yes, how and why? If not, what measures did you take to secure it?
 
@@ -96,7 +87,7 @@ Yes, the web application is vulnerable.
 2. LEE Zi Shan
     - Linking front-end and back-end (diary), back-end (diary)
 3. SIA Wei Kiat Jason
-    - Front-end, Database Design
+    - Front-end design and implementation, Database Design
 4. ZHOU Zhi Zhong
     - Linking front-end and back-end (users), back-end (users)
 
