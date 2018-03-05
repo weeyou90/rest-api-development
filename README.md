@@ -2,23 +2,23 @@
 
 CS5331 Assignment 1 Project Reference Repository
 
-### Team Members
+## Team Members
 
 1. LAU Wee You
 2. LEE Zi Shan
 3. SIA Wei Kiat Jason
 4. ZHOU Zhi Zhong
 
-### Short Answer Questions
+## Short Answer Questions
 
-#### Question 1: Briefly describe the web technology stack used in your implementation.
+### Question 1: Briefly describe the web technology stack used in your implementation.
 
 The application uses Python-Flask to handle requests to the back-end. The code in the Python-Flask will then modify our database using SQLite3. 
 
 On the UI, we use javascript to asynchronously call our RESTful API and modify our HTML accordingly.
 
-
-#### Question 2: Are there any security considerations your team thought about?
+*****
+### Question 2: Are there any security considerations your team thought about?
 
 Yes. However, given that it is not part of the requirements, we have not implemented them. 
 
@@ -36,16 +36,18 @@ Implement web certificates so that users can trust that they are heading to the 
 
 Session ID might be stolen, as such if possible we would like to tie the session id to the source IP adress and user agent as well. 
  
-#### Question 3: Are there any improvements you would make to the API specification to improve the security of the web application?
+*****
+### Question 3: Are there any improvements you would make to the API specification to improve the security of the web application?
 
 Use port 80 for both backend and front end so that CORS can be disabled.
 
-#### Question 4: Are there any additional features you would like to highlight?
+****
+### Question 4: Are there any additional features you would like to highlight?
 
 1) We provide a friendly way to show the diary page, `read more` has a card window to display this diary. modify diary permission and delete personal diaries. Inside `Read My Diary Entries`, we can switch the permission between `public` and `private` through `eye` icon, and delete the page from `delete` icon.
 
-
-#### Question 5: Is your web application vulnerable? If yes, how and why? If not, what measures did you take to secure it?
+****
+### Question 5: Is your web application vulnerable? If yes, how and why? If not, what measures did you take to secure it?
 
 
 Yes, the web application is vulnerable. 
@@ -63,12 +65,12 @@ Yes, the web application is vulnerable.
 
 
 
-#### Feedback: Is there any other feedback you would like to give?
+### Feedback: Is there any other feedback you would like to give?
 - Assignment could have been more security focused (For example, given a existing secret diary, implement XXX security features).
 
-### Declaration
+## Declaration
 
-#### Please declare your individual contributions to the assignment:
+### Please declare your individual contributions to the assignment:
 
 1. LAU Wee You
     - Docker requirements, implementing database, skeleton codes, debugging
@@ -80,14 +82,13 @@ Yes, the web application is vulnerable.
     - Linking front-end and back-end (users), back-end (users)
 
 
-### Screenshots
+## Screenshots
 
 ![Create Diary](./img/Create_diary.png)
-*************
+
 ![Personal Diary Entries](./img/Personal_diary.png)
-*************
+
 ![Profile Page](./img/Profile.png)
-*************
+
 ![Public Diary Enntries](./img/Public_diary.png)
-*************
 
