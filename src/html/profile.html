@@ -55,7 +55,7 @@
     contentType: "application/json",
     success : function(data){
         if (data.status == true) {    
-      $("#user").append(data.result.name)
+      $("#user").append(data.result.username)
       $("#fullname").append(data.result.fullname)
       $("#age").append(data.result.age)
         }

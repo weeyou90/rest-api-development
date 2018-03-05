@@ -271,7 +271,7 @@ def users():
     if is_logged_in(token):
         db=get_db()
         #get user profile based on token if logged in
-        cursor = db.execute('SELECT name, fullname, age FROM users where token = (?)', [token])  
+        cursor = db.execute('SELECT name as username, fullname, age FROM users where token = (?)', [token])  
         user_information = cursor.fetchone()
         return make_json_response(user_information, True)
     else:
@@ -331,7 +331,6 @@ def diary_create():
         public = data['public']
         text = data['text']
     except:
-        print request.data
         return make_json_response("Invalid inputs",False)
 
     #authenticate
