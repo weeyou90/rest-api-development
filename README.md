@@ -69,7 +69,7 @@ Yes, the web application is vulnerable.
 
 4) The current application is also susceptible to eavesdropping, as such we can implement HTTPS to prevent man in the middle attack.
 
-5) Prone to DOS attack, we can implement some services at to hold any request from the particlar IP if there is an unusual amount of request from them.
+5) Prone to DOS attack, we can implement some services to hold any request from the particlar IP if there is an unusual amount of request from them.
 
 6) Brute force attack, we should deny the user from logging in if they have key in more than 3 times of wrong password combination.
 
