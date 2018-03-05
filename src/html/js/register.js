@@ -46,7 +46,7 @@ $(document).ready(function(){
                     {
                          // have some issues, need to fix
                       alert("Error");
-                      window.location= "./register.html";
+                      window.location= "./signup.html";
                     }
 
                 },
