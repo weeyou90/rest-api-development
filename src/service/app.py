@@ -31,7 +31,7 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 CORS(app)
 
 # Remember to update this list
-ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users/', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permissions','/diary/new_entry'] 
+ENDPOINT_LIST = ['/', '/meta/heartbeat', '/meta/members', '/users/register', '/users/authenticate', '/users/expire', '/users', '/meta/short_answer_questions', '/diary', '/diary/create', '/diary/delete', '/diary/permission','/diary/new_entry'] 
 
 
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -100,7 +100,6 @@ def make_json_response(data, status=True, code=200):
     return response
 
 def is_logged_in(token):
-    print("token is" + token)
     if token == "0":
         return False;    
 
@@ -383,7 +382,7 @@ def diary_delete():
         return make_json_response(None, True)
     return make_json_response("Cannot find diary entry", False)
 
-@app.route("/diary/permissions", methods=['POST'])
+@app.route("/diary/permission", methods=['POST'])
 def diary_permissions():
     #token, id, public
     try:
